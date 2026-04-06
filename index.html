@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>rAIse — Responsible AI Social Evaluation | Microsoft ISD 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --ms-navy: #0a2540;
+    --ms-blue: #0078D4;
+    --ms-blue-light: #2899f5;
+    --ms-cyan: #50e6ff;
+    --ms-green: #107c10;
+    --ms-orange: #ca5010;
+    --ms-purple: #5c2d91;
+    --bg: #f3f2f1;
+    --card: #ffffff;
+    --text: #201f1e;
+    --muted: #605e5c;
+    --border: #edebe9;
+    --pill-bg: #f0f6ff;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; }
+
+  /* ── HEADER ── */
+  header { background: var(--ms-navy); color: #fff; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; min-height: 64px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+  .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: #fff; }
+  .logo-icon { width: 52px; height: 36px; background: var(--ms-blue); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; letter-spacing: -0.5px; color: #fff; padding: 0 6px; }
+  .logo-text { font-size: 18px; font-weight: 600; letter-spacing: -0.3px; }
+  .logo-sub { font-size: 11px; opacity: 0.65; font-weight: 400; display: block; }
+  nav { display: flex; gap: 4px; }
+  nav button { background: transparent; border: none; color: rgba(255,255,255,0.7); padding: 8px 14px; cursor: pointer; font-size: 13px; font-family: inherit; border-radius: 4px; transition: all 0.15s; white-space: nowrap; }
+  nav button:hover, nav button.active { background: rgba(255,255,255,0.12); color: #fff; }
+  nav button.active { font-weight: 600; }
+
+  /* ── PROGRESS BAR ── */
+  #progress-bar-wrap { background: var(--ms-navy); padding: 0 2rem 12px; }
+  .progress-steps { display: flex; gap: 0; position: relative; max-width: 600px; }
+  .progress-steps::before { content:''; position:absolute; top: 12px; left: 0; right: 0; height: 2px; background: rgba(255,255,255,0.2); }
+  .progress-steps::after { content:''; position:absolute; top: 12px; left: 0; height: 2px; background: var(--ms-cyan); transition: width 0.4s; width: var(--prog, 0%); }
+  .progress-step { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative; z-index: 1; cursor: pointer; }
+  .step-dot { width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); transition: all 0.2s; }
+  .progress-step.done .step-dot { background: var(--ms-cyan); border-color: var(--ms-cyan); color: var(--ms-navy); }
+  .progress-step.active .step-dot { background: #fff; border-color: #fff; color: var(--ms-navy); }
+  .step-label { font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 500; text-align: center; }
+  .progress-step.done .step-label, .progress-step.active .step-label { color: rgba(255,255,255,0.9); }
+
+  /* ── MAIN ── */
+  main { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  section { display: none; }
+  section.active { display: block; }
+
+  /* ── CARDS ── */
+  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.5rem 2rem; margin-bottom: 1.5rem; }
+  .card-title { font-size: 17px; font-weight: 700; color: var(--ms-navy); margin-bottom: 0.5rem; }
+  .card-sub { font-size: 13px; color: var(--muted); margin-bottom: 1rem; }
+
+  /* ── HERO BANNER ── */
+  .hero { background: linear-gradient(135deg, var(--ms-navy) 0%, #0d3a6e 100%); color: #fff; border-radius: var(--radius); padding: 3rem 2.5rem; margin-bottom: 2rem; position: relative; overflow: hidden; }
+  .hero::after { content:''; position: absolute; right: -40px; top: -40px; width: 300px; height: 300px; border-radius: 50%; background: rgba(80,230,255,0.06); }
+  .hero-tag { display: inline-block; background: rgba(80,230,255,0.18); color: var(--ms-cyan); font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; margin-bottom: 1rem; border: 1px solid rgba(80,230,255,0.3); }
+  .hero h1 { font-size: 36px; font-weight: 800; letter-spacing: -1px; line-height: 1.15; margin-bottom: 0.75rem; }
+  .hero h1 span { color: var(--ms-cyan); }
+  .hero p { font-size: 15px; opacity: 0.8; max-width: 520px; line-height: 1.7; }
+  .hero-meta { margin-top: 1.5rem; font-size: 12px; opacity: 0.5; letter-spacing: 0.5px; }
+
+  /* ── STEPS OVERVIEW ── */
+  .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+  .step-card { background: var(--pill-bg); border: 1px solid #d0e4f8; border-radius: var(--radius); padding: 1.25rem; }
+  .step-num { width: 28px; height: 28px; background: var(--ms-blue); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; margin-bottom: 0.75rem; }
+  .step-title { font-size: 13px; font-weight: 700; color: var(--ms-navy); margin-bottom: 0.3rem; }
+  .step-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── PILLAR OVERVIEW TABLE ── */
+  .pillar-list { list-style: none; display: grid; gap: 8px; }
+  .pillar-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--bg); border-radius: 6px; border-left: 4px solid var(--ms-blue); }
+  .pillar-name { font-size: 13px; font-weight: 600; flex: 1; }
+  .pillar-axis { font-size: 11px; color: var(--muted); background: var(--border); padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
+
+  /* ── BUTTONS ── */
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; border-radius: 4px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; border: 2px solid transparent; transition: all 0.15s; text-decoration: none; }
+  .btn-primary { background: var(--ms-blue); color: #fff; border-color: var(--ms-blue); }
+  .btn-primary:hover { background: #006cbf; border-color: #006cbf; }
+  .btn-outline { background: transparent; color: var(--ms-blue); border-color: var(--ms-blue); }
+  .btn-outline:hover { background: var(--pill-bg); }
+  .btn-ghost { background: transparent; color: var(--muted); border-color: var(--border); }
+  .btn-ghost:hover { background: var(--border); color: var(--text); }
+  .btn-sm { padding: 6px 14px; font-size: 12px; }
+  .btn-nav { display: flex; gap: 12px; margin-top: 2rem; align-items: center; flex-wrap: wrap; }
+
+  /* ── ASSESSMENT SECTION ── */
+  .pillar-header { display: flex; align-items: center; gap: 12px; padding: 1rem 1.5rem; background: var(--ms-navy); border-radius: var(--radius) var(--radius) 0 0; color: #fff; cursor: pointer; user-select: none; }
+  .pillar-header-num { width: 30px; height: 30px; border-radius: 50%; background: var(--ms-blue); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0; }
+  .pillar-header-text { flex: 1; }
+  .pillar-header-title { font-size: 15px; font-weight: 700; }
+  .pillar-header-sub { font-size: 11px; opacity: 0.65; }
+  .pillar-header-score { font-size: 20px; font-weight: 800; color: var(--ms-cyan); min-width: 36px; text-align: right; }
+  .pillar-header-chevron { transition: transform 0.2s; font-size: 12px; opacity: 0.7; }
+  .pillar-block { margin-bottom: 1rem; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+  .pillar-body { background: var(--card); }
+  .pillar-body.collapsed { display: none; }
+
+  /* ── QUESTION ── */
+  .question-row { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); }
+  .question-row:last-child { border-bottom: none; }
+  .q-num { font-size: 11px; font-weight: 700; color: var(--ms-blue); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .q-text { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 10px; line-height: 1.5; }
+  .q-anchors { display: flex; gap: 6px; font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+  .q-anchor { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 4px 8px; flex: 1; line-height: 1.4; }
+  .q-anchor strong { display: block; color: var(--ms-navy); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+  .score-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
+  .score-btn { width: 44px; height: 44px; border: 2px solid var(--border); background: var(--card); border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 700; color: var(--muted); font-family: inherit; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+  .score-btn:hover { border-color: var(--ms-blue); color: var(--ms-blue); background: var(--pill-bg); }
+  .score-btn.selected { background: var(--ms-blue); border-color: var(--ms-blue); color: #fff; }
+  .score-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* ── TECH PROFILE ── */
+  .tq-block { margin-bottom: 1.25rem; }
+  .tq-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+  .tq-id { font-size: 12px; font-weight: 800; color: var(--ms-blue); text-transform: uppercase; letter-spacing: 0.5px; }
+  .tq-text { font-size: 15px; font-weight: 700; color: var(--ms-navy); }
+  .tq-guidance { font-size: 12px; color: var(--muted); margin-bottom: 10px; padding: 6px 10px; background: var(--bg); border-radius: 4px; border-left: 3px solid var(--ms-cyan); }
+  .tq-options { display: grid; gap: 6px; }
+  .tq-opt { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border: 2px solid var(--border); border-radius: 6px; cursor: pointer; transition: all 0.15s; background: var(--card); }
+  .tq-opt:hover { border-color: var(--ms-blue); background: var(--pill-bg); }
+  .tq-opt.selected { border-color: var(--ms-blue); background: var(--pill-bg); }
+  .tq-opt input { margin-top: 3px; accent-color: var(--ms-blue); flex-shrink: 0; }
+  .tq-opt-label { font-size: 13px; font-weight: 500; }
+  .tq-opt-val { font-size: 12px; font-weight: 800; color: var(--ms-blue); margin-right: 4px; }
+
+  /* ── RESULTS ── */
+  .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+  @media(max-width:680px) { .results-grid { grid-template-columns: 1fr; } }
+  .score-hero { text-align: center; padding: 2rem; }
+  .score-big { font-size: 64px; font-weight: 900; letter-spacing: -3px; color: var(--ms-navy); line-height: 1; }
+  .score-label-big { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  .maturity-badge { display: inline-block; padding: 8px 18px; border-radius: 20px; font-weight: 700; font-size: 14px; margin-top: 12px; }
+  .quadrant-badge { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 6px; font-weight: 700; font-size: 16px; margin-top: 8px; }
+
+  .pillar-bar-list { display: grid; gap: 8px; }
+  .pillar-bar-row { display: flex; align-items: center; gap: 10px; }
+  .pillar-bar-label { font-size: 12px; font-weight: 600; width: 170px; flex-shrink: 0; color: var(--text); }
+  .pillar-bar-track { flex: 1; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .pillar-bar-fill { height: 100%; border-radius: 4px; background: var(--ms-blue); transition: width 0.6s ease; }
+  .pillar-bar-val { font-size: 12px; font-weight: 700; color: var(--ms-navy); min-width: 30px; text-align: right; }
+
+  .quadrant-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+  .q-cell { padding: 1rem; border-radius: 4px; text-align: center; }
+  .q-cell-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .q-cell-name { font-size: 13px; font-weight: 600; margin-top: 2px; }
+  .q-cell.active { box-shadow: 0 0 0 3px var(--ms-blue), 0 4px 12px rgba(0,120,212,0.25); transform: scale(1.02); z-index: 1; position: relative; }
+
+  .prescription-card { background: linear-gradient(135deg, #0a2540 0%, #0d3a6e 100%); color: #fff; border-radius: var(--radius); padding: 2rem; margin-bottom: 1.5rem; }
+  .prescription-title { font-size: 18px; font-weight: 800; margin-bottom: 1.25rem; color: var(--ms-cyan); }
+  .presc-row { display: flex; gap: 12px; margin-bottom: 1rem; align-items: flex-start; }
+  .presc-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .presc-key { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; opacity: 0.65; text-transform: uppercase; margin-bottom: 2px; }
+  .presc-val { font-size: 14px; font-weight: 600; line-height: 1.5; }
+  .presc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media(max-width:600px) { .presc-grid { grid-template-columns: 1fr; } }
+
+  .chart-wrap { position: relative; width: 100%; max-width: 340px; margin: 0 auto; }
+
+  /* ── REFERENCE SECTION ── */
+  .maturity-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .maturity-table th { background: var(--ms-navy); color: #fff; padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.3px; }
+  .maturity-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .maturity-table tr:nth-child(even) td { background: var(--bg); }
+  .maturity-table tr:hover td { background: var(--pill-bg); }
+  .level-pill { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+
+  .portfolio-grid { display: grid; gap: 1rem; }
+  .portfolio-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; border-left: 4px solid var(--ms-blue); }
+  .portfolio-play { font-size: 14px; font-weight: 700; color: var(--ms-navy); margin-bottom: 4px; }
+  .portfolio-offer { font-size: 12px; font-weight: 600; color: var(--ms-blue); margin-bottom: 6px; }
+  .portfolio-intent { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .portfolio-value { font-size: 12px; color: var(--text); line-height: 1.6; }
+
+  /* ── MISC ── */
+  .section-title { font-size: 22px; font-weight: 800; color: var(--ms-navy); margin-bottom: 0.4rem; letter-spacing: -0.5px; }
+  .section-sub { font-size: 14px; color: var(--muted); margin-bottom: 1.5rem; }
+  .tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+  .divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media(max-width:600px) { .two-col { grid-template-columns: 1fr; } nav { display: none; } }
+  .answered-count { font-size: 12px; color: var(--muted); margin-left: auto; }
+  .incomplete-warn { background: #fff4e5; border: 1px solid #f7b14b; border-radius: 6px; padding: 10px 14px; font-size: 13px; color: #7a4f1a; margin-bottom: 1rem; display: none; }
+
+  /* ── EXPANDED PRESCRIPTION ── */
+  .stu-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .stu-badge { background: #e8f3fb; border: 1px solid #c7e0f4; color: var(--ms-navy); border-radius: 20px; padding: 6px 16px; font-size: 13px; font-weight: 700; }
+  .security-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; margin-top: 10px; }
+  .security-layer { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 10px 12px; border-left: 3px solid #0078D4; }
+  .security-layer-name { font-size: 12px; font-weight: 700; color: var(--ms-navy); }
+  .next-step-item { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .next-step-item:last-child { border-bottom: none; }
+  .next-step-num { width: 30px; height: 30px; border-radius: 50%; background: var(--ms-blue); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; flex-shrink: 0; margin-top: 2px; }
+  .next-step-title { font-size: 13px; font-weight: 700; color: var(--ms-navy); }
+  .next-step-text { font-size: 13px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
+
+  /* ── PRINT ── */
+  @media print {
+    header, #progress-bar-wrap, .btn-nav, nav { display: none !important; }
+    section { display: block !important; }
+    .pillar-body.collapsed { display: block !important; }
+    body { font-size: 12px; }
+    .hero { background: #0a2540 !important; -webkit-print-color-adjust: exact; }
+    .prescription-card { background: #0a2540 !important; -webkit-print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="#" onclick="showSection('overview')">
+    <div class="logo-icon">rAIse</div>
+    <div>
+      <span class="logo-text">rAIse</span>
+      <span class="logo-sub">Responsible AI Social Evaluation</span>
+    </div>
+  </a>
+  <nav>
+    <button onclick="showSection('overview')" id="nav-overview" class="active">Overview</button>
+    <button onclick="showSection('assessment')" id="nav-assessment">Assessment</button>
+    <button onclick="showSection('techprofile')" id="nav-techprofile">Tech Profile</button>
+    <button onclick="showSection('results')" id="nav-results">Results</button>
+    <button onclick="showSection('reference')" id="nav-reference">Reference</button>
+  </nav>
+</header>
+
+<div id="progress-bar-wrap">
+  <div class="progress-steps" id="progressSteps" style="--prog:0%">
+    <div class="progress-step active" onclick="showSection('overview')"><div class="step-dot">1</div><div class="step-label">Overview</div></div>
+    <div class="progress-step" onclick="showSection('assessment')"><div class="step-dot">2</div><div class="step-label">Assessment</div></div>
+    <div class="progress-step" onclick="showSection('techprofile')"><div class="step-dot">3</div><div class="step-label">Tech Profile</div></div>
+    <div class="progress-step" onclick="showSection('results')"><div class="step-dot">4</div><div class="step-label">Results</div></div>
+  </div>
+</div>
+
+<main>
+
+<!-- ══════════════════════════ OVERVIEW ══════════════════════════ -->
+<section id="overview" class="active">
+  <div class="hero">
+    <div class="hero-tag">Microsoft ISD · 2026</div>
+    <h1>Responsible AI<br><span>Social Evaluation</span></h1>
+    <p>A structured assessment framework that measures your organization's AI readiness across seven social and operational pillars — and prescribes the right Microsoft technology stack for your unique context.</p>
+    <div class="hero-meta">rAIse &nbsp;·&nbsp; ISD Area Delivery Italy &nbsp;·&nbsp; microsoft.com</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">How to use this tool</div>
+    <div class="card-sub">Four steps to your personalized AI prescription</div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-title">Assessment tab</div>
+        <div class="step-desc">Score each of the 35 questions on a scale of 1–5. Pillar averages, maturity level, and quadrant position are calculated automatically.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-title">Tech Profile tab</div>
+        <div class="step-desc">Answer 6 Technology Context Profile questions (T1–T6) to capture your licensing baseline, build capacity, primary use case, and regulatory context.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-title">Prescription tab</div>
+        <div class="step-desc">Your complete technology recommendation is generated automatically — core Microsoft AI stack, governance overlay, recommended entry point, and speed-to-value roadmap.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-title">Share with customer</div>
+        <div class="step-desc">Use this tool as pre-work before the workshop. Collect completed tools from all participants to reveal organizational alignment and divergence.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Assessment Pillars</div>
+    <div class="card-sub">Seven dimensions of Social Architecture — scored 1 (Nascent) to 5 (Adaptive)</div>
+    <ul class="pillar-list">
+      <li class="pillar-item"><span class="pillar-name">1 · Trust Architecture</span><span class="pillar-axis">Axis A — Autonomy Readiness</span></li>
+      <li class="pillar-item"><span class="pillar-name">2 · Governance &amp; Accountability</span><span class="pillar-axis">Axis A — Autonomy Readiness</span></li>
+      <li class="pillar-item"><span class="pillar-name">3 · Workforce Readiness</span><span class="pillar-axis">Axis B — Org Complexity</span></li>
+      <li class="pillar-item"><span class="pillar-name">4 · Process Intelligibility</span><span class="pillar-axis">Axis A — Autonomy Readiness</span></li>
+      <li class="pillar-item"><span class="pillar-name">5 · Data &amp; Knowledge Infrastructure</span><span class="pillar-axis">Axis B — Org Complexity</span></li>
+      <li class="pillar-item"><span class="pillar-name">6 · Value &amp; Strategic Alignment</span><span class="pillar-axis">Axis B — Org Complexity</span></li>
+      <li class="pillar-item"><span class="pillar-name">7 · Ethical &amp; Regulatory Posture</span><span class="pillar-axis">Ethical Overlay</span></li>
+    </ul>
+  </div>
+
+  <div class="btn-nav">
+    <button class="btn btn-primary" onclick="showSection('assessment')">Start Assessment →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════ ASSESSMENT ══════════════════════════ -->
+<section id="assessment">
+  <div class="section-title">Social Architecture Assessment</div>
+  <div class="section-sub">Score each question 1 (Starting) to 5 (Adaptive) &nbsp;·&nbsp; <span id="answered-count">0 of 35</span> answered</div>
+  <div id="incomplete-warn" class="incomplete-warn">⚠ Please answer all 35 questions before continuing to see your full prescription.</div>
+  <div id="assessment-questions"></div>
+  <div class="btn-nav">
+    <button class="btn btn-ghost" onclick="showSection('overview')">← Back</button>
+    <button class="btn btn-primary" onclick="goToTechProfile()">Continue to Tech Profile →</button>
+    <span id="answer-progress" style="font-size:12px; color:var(--muted); margin-left: auto;"></span>
+  </div>
+</section>
+
+<!-- ══════════════════════════ TECH PROFILE ══════════════════════════ -->
+<section id="techprofile">
+  <div class="section-title">Technology Context Profile</div>
+  <div class="section-sub">Select one answer per question (A–E) to calibrate your prescription</div>
+  <div id="tech-profile-questions"></div>
+  <div class="btn-nav">
+    <button class="btn btn-ghost" onclick="showSection('assessment')">← Back</button>
+    <button class="btn btn-primary" onclick="goToResults()">See My Results →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════ RESULTS ══════════════════════════ -->
+<section id="results">
+  <div class="section-title">Your Results</div>
+  <div class="section-sub">Based on your assessment scores and technology profile</div>
+  <div id="results-content"></div>
+  <div class="btn-nav">
+    <button class="btn btn-ghost" onclick="showSection('techprofile')">← Edit Tech Profile</button>
+    <button class="btn btn-outline" onclick="window.print()">🖨 Print Results</button>
+    <button class="btn btn-ghost btn-sm" onclick="resetAll()" style="margin-left:auto">↺ Start Over</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════ REFERENCE ══════════════════════════ -->
+<section id="reference">
+  <div class="section-title">Reference</div>
+  <div class="section-sub">Maturity model and ISD FY26 portfolio</div>
+
+  <div class="card">
+    <div class="card-title">Microsoft Agentic AI Adoption Maturity Model</div>
+    <div class="card-sub">Source: learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/maturity-model-overview · Integrated into rAIse</div>
+    <table class="maturity-table">
+      <thead><tr><th>MS Level</th><th>Level Name</th><th>rAIse Level</th><th>Key Characteristics</th></tr></thead>
+      <tbody>
+        <tr><td><span class="level-pill" style="background:#f4f4f4;color:#333">100</span></td><td>Initial</td><td><strong>Level 1 — Nascent</strong></td><td>Unplanned, experimental, siloed. Capabilities are individual-dependent.</td></tr>
+        <tr><td><span class="level-pill" style="background:#fff4e5;color:#7a4f1a">200</span></td><td>Repeatable</td><td><strong>Level 2 — Emerging</strong></td><td>Early patterns emerge. Activities are repeatable but informal and uneven.</td></tr>
+        <tr><td><span class="level-pill" style="background:#e8f3fb;color:#0a4f7a">300</span></td><td>Defined</td><td><strong>Level 3 — Structured</strong></td><td>Capabilities formally defined, governed, and aligned to business goals.</td></tr>
+        <tr><td><span class="level-pill" style="background:#e6f7e6;color:#0a5c0a">400</span></td><td>Capable</td><td><strong>Level 4 — Integrated</strong></td><td>Agents embedded in enterprise planning. Cross-team scaling supported.</td></tr>
+        <tr><td><span class="level-pill" style="background:#f0eafa;color:#3a1a6e">500</span></td><td>Efficient</td><td><strong>Level 5 — Adaptive</strong></td><td>Agent-first enterprise. Continuously optimized, C-suite accountable.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">ISD FY26 Cloud &amp; AI Platforms Portfolio</div>
+    <div class="card-sub">Five solution plays mapped to enterprise AI adoption phases</div>
+    <div class="portfolio-grid">
+      <div class="portfolio-card">
+        <div class="portfolio-play">Platform Engineering</div>
+        <div class="portfolio-offer">Developer Experience with GitHub</div>
+        <div class="portfolio-intent">Win developers with GitHub and drive them to Azure</div>
+        <div class="portfolio-value">Empower developers with GitHub and AI-powered productivity tools.</div>
+      </div>
+      <div class="portfolio-card">
+        <div class="portfolio-play">Migrate &amp; Modernize Your Estate</div>
+        <div class="portfolio-offer">Secure Migration &amp; Modernization</div>
+        <div class="portfolio-intent">Modernize applications, data &amp; infrastructure for use within Azure Platform</div>
+        <div class="portfolio-value">Migrate and modernize to Microsoft Azure using an industrialized approach with automation and AI integration. Deliver measurable impact — reducing risk, speeding time-to-value, and maximizing ROI.</div>
+      </div>
+      <div class="portfolio-card">
+        <div class="portfolio-play">Unify Your Data Platform</div>
+        <div class="portfolio-offer">Unify Your Data &amp; Analytics Platform</div>
+        <div class="portfolio-intent">Turn data into insights. Build a trusted, modern data platform.</div>
+        <div class="portfolio-value">Modernize the enterprise data estate to serve as a foundation for advanced analytics and AI/ML workloads. Deliver production-ready AI/ML solutions directly from the unified platform.</div>
+      </div>
+      <div class="portfolio-card" style="border-left-color: var(--ms-green)">
+        <div class="portfolio-play">Innovate with AI Apps &amp; Agents</div>
+        <div class="portfolio-offer">AI Scalability &amp; Governance</div>
+        <div class="portfolio-intent">Operate AI at scale securely &amp; responsibly</div>
+        <div class="portfolio-value">Establish a secure, governed, and operational foundation to manage AI/ML workloads at enterprise scale, ensuring they are monitored, cost-effective, and compliant.</div>
+      </div>
+      <div class="portfolio-card" style="border-left-color: var(--ms-green)">
+        <div class="portfolio-play">Innovate with AI Apps &amp; Agents</div>
+        <div class="portfolio-offer">Innovate with AI Apps</div>
+        <div class="portfolio-intent">Drive AI Transformation with AI Apps at Scale</div>
+        <div class="portfolio-value">Design and implement AI-powered applications where intelligence enhances the user experience and business workflows.</div>
+      </div>
+      <div class="portfolio-card" style="border-left-color: var(--ms-purple)">
+        <div class="portfolio-play">Innovate with AI Apps &amp; Agents</div>
+        <div class="portfolio-offer">Agentic AI Transformation</div>
+        <div class="portfolio-intent">Let AI run things without users involved</div>
+        <div class="portfolio-value">Develop goal-directed, autonomous, or multi-agent AI systems that reason, plan, and act on behalf of users. Agents may coordinate with tools, memory, APIs, and external systems to perform high-level tasks with minimal human input.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-nav">
+    <button class="btn btn-ghost" onclick="showSection('results')">← Back to Results</button>
+  </div>
+</section>
+
+</main>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════════
+
+const PILLARS = [
+  { id: 1, name: 'Trust Architecture',             axis: 'A', axisName: 'Autonomy Readiness', color: '#0078D4' },
+  { id: 2, name: 'Governance & Accountability',    axis: 'A', axisName: 'Autonomy Readiness', color: '#2899f5' },
+  { id: 3, name: 'Workforce Readiness',            axis: 'B', axisName: 'Org Complexity',     color: '#00b7c3' },
+  { id: 4, name: 'Process Intelligibility',        axis: 'A', axisName: 'Autonomy Readiness', color: '#0078D4' },
+  { id: 5, name: 'Data & Knowledge Infrastructure',axis: 'B', axisName: 'Org Complexity',     color: '#00b7c3' },
+  { id: 6, name: 'Value & Strategic Alignment',    axis: 'B', axisName: 'Org Complexity',     color: '#50e6ff' },
+  { id: 7, name: 'Ethical & Regulatory Posture',   axis: '-', axisName: 'Ethical Overlay',    color: '#a67af4' },
+];
+
+const QUESTIONS = [
+  { id:'1.1', p:1, q:'How does/would your organization treat AI-generated recommendations?', s1:'AI is not in use; recommendations would likely be ignored or viewed with skepticism', s5:'Drives autonomous actions with minimal human intervention' },
+  { id:'1.2', p:1, q:'How does your organization approach the risk of AI errors or inaccuracies?', s1:'AI is not in use; no awareness of AI error risk or response process exists', s5:'AI errors treated as operational risk — quantified and mitigated' },
+  { id:'1.3', p:1, q:'Who currently uses AI tools in your organization?', s1:'Nobody — AI tools are not yet in use', s5:'Organization-wide, embedded in core workflows' },
+  { id:'1.4', p:1, q:'How open is leadership to the idea of delegating tasks or decisions to AI agents?', s1:'Not on the radar — leadership has not considered AI delegation and requires full human control', s5:'Actively designing workflows around agents as primary executors' },
+  { id:'1.5', p:1, q:'How does your organization communicate the limitations of AI tools to employees?', s1:'Not communicated — AI is not yet in use or there is no awareness of the need', s5:'Transparent AI governance dashboards accessible to everyone' },
+  { id:'2.1', p:2, q:'Does a defined AI governance policy exist?', s1:'No policy exists', s5:'Integrated into operational controls and audited regularly' },
+  { id:'2.2', p:2, q:'How does your organization plan to assign accountability for AI agent errors or wrong decisions?', s1:'Nobody — accountability is undefined', s5:'Clear RACI with defined escalation paths for AI decisions' },
+  { id:'2.3', p:2, q:'How does your organization monitor or plan to monitor AI models and agents in production?', s1:'Not monitored — no AI in production or no monitoring plan in place', s5:'Continuous observability with drift detection and SLA-backed alerts' },
+  { id:'2.4', p:2, q:'How is AI-related risk managed in your organization?', s1:'Not managed or recognized', s5:'AI risk embedded in enterprise risk management and strategic planning' },
+  { id:'2.5', p:2, q:'Are you compliant with AI regulations (EU AI Act, GDPR, etc.)?', s1:'Unaware of applicable regulations', s5:'Proactively ahead of regulatory requirements' },
+  { id:'3.1', p:3, q:"How would you describe your workforce's AI literacy?", s1:'Most employees have never used a generative AI tool', s5:'AI fluency tracked as a core competency in performance management' },
+  { id:'3.2', p:3, q:'How does your org address fear of AI replacing jobs?', s1:'Not addressed — either not yet a concern or a source of unresolved resistance', s5:'AI adoption co-designed with employees as equal partners' },
+  { id:'3.3', p:3, q:'What is the availability of AI champions or power users?', s1:'None identified', s5:'AI champions embedded and resourced in every business unit' },
+  { id:'3.4', p:3, q:'How does your org upskill employees for AI-augmented roles?', s1:'No structured upskilling program exists', s5:'AI competency framework with role-specific certification paths' },
+  { id:'3.5', p:3, q:'How involved are employees in shaping how AI tools and workflows are introduced?', s1:'Not involved at any stage', s5:'Employee-led AI innovation is encouraged, funded, and rewarded' },
+  { id:'4.1', p:4, q:'How well-documented are your core business processes?', s1:'Mostly undocumented — tribal knowledge dominates', s5:'Structured in formal models, continuously updated' },
+  { id:'4.2', p:4, q:'How variable are decisions in your key workflows?', s1:'Highly variable, require expert judgment, many exceptions', s5:'Decision logic fully specified in a decision management system' },
+  { id:'4.3', p:4, q:'How much organizational knowledge is accessible digitally?', s1:"Most knowledge lives in people's heads", s5:'Knowledge graph or semantic search enables AI retrieval at scale' },
+  { id:'4.4', p:4, q:'What is the level of process standardization across departments?', s1:'Each department does things completely differently', s5:'Continuous process improvement with AI-driven optimization' },
+  { id:'4.5', p:4, q:'How automation-ready are your key workflows if AI tools were introduced?', s1:'Fully human-driven — no automation points identified', s5:'Adaptive workflows where AI and humans dynamically divide work' },
+  { id:'5.1', p:5, q:'How would you rate the quality and accessibility of your data?', s1:'Siloed, inconsistent, and difficult to access', s5:'Real-time, governed, AI-ready data platform in production' },
+  { id:'5.2', p:5, q:'How integrated are your key business systems?', s1:'Siloed systems with manual data transfer between them', s5:'Composable data fabric enables autonomous AI access across systems' },
+  { id:'5.3', p:5, q:'How is your unstructured content managed?', s1:'Unmanaged — scattered across drives and mailboxes', s5:'AI-indexed with semantic search and enterprise knowledge grounding' },
+  { id:'5.4', p:5, q:"Do you have a strategy to connect AI tools to your organization's internal knowledge and data?", s1:'No strategy in place', s5:'Comprehensive knowledge layer actively grounding all AI agents' },
+  { id:'5.5', p:5, q:'How does your organization manage or plan to manage data privacy and security for AI use?', s1:'No consideration for AI data privacy — AI is not yet in use or data risks are unrecognized', s5:'Zero-trust data access model applied to all AI agent interactions' },
+  { id:'6.1', p:6, q:'How clearly are AI use cases tied to business outcomes?', s1:'No clear business case exists for AI', s5:'AI impact measured in P&L and operational dashboards in real time' },
+  { id:'6.2', p:6, q:'How does your organization prioritize or plan to prioritize AI initiatives?', s1:'No AI initiatives exist, or prioritization is entirely ad hoc', s5:'Portfolio management with dynamic reprioritization tied to strategy' },
+  { id:'6.3', p:6, q:'How engaged is senior leadership in AI adoption?', s1:'Unaware or disengaged', s5:'AI is a board-level strategic priority with named executive ownership' },
+  { id:'6.4', p:6, q:'How does your organization measure or plan to measure the ROI of AI investments?', s1:'No measurement or tracking whatsoever', s5:'Real-time value realization dashboard visible to leadership' },
+  { id:'6.5', p:6, q:'How aligned is your AI strategy to industry competitive dynamics?', s1:'No benchmarking against industry peers', s5:'AI is central to business model transformation and competitive moat' },
+  { id:'7.1', p:7, q:'Does a Responsible AI (RAI) framework exist?', s1:'No framework exists', s5:'RAI principles operationalized, audited, and reported externally' },
+  { id:'7.2', p:7, q:'How does your organization handle AI bias and fairness?', s1:'Not addressed at any level', s5:'Fairness metrics tracked per model, published and regularly reviewed' },
+  { id:'7.3', p:7, q:"How transparent is (or would be) your organization's use of AI in customer-facing processes?", s1:'Not considered — AI is not yet used with customers or transparency has not been thought through', s5:'Customers can opt out, audit, and formally appeal AI decisions' },
+  { id:'7.4', p:7, q:'Preparedness for EU AI Act or equivalent regulation?', s1:'Unaware of the regulation', s5:'Fully compliant, audit-ready, legal team engaged' },
+  { id:'7.5', p:7, q:'How does your organization handle or plan to handle inaccurate or fabricated AI-generated content?', s1:'No handling in place — AI is not generating content or risks are unrecognized', s5:'Multi-layer content safety and automated verification pipeline' },
+];
+
+const TECH_QUESTIONS = [
+  { id:'T1', q:'Microsoft licensing baseline', g:'Your licensing baseline determines which Microsoft AI layer is immediately accessible', opts:[
+    {v:'A', l:'No Microsoft AI / basic M365 only'},
+    {v:'B', l:'M365 E3 (no Copilot yet)'},
+    {v:'C', l:'M365 E5/E7 or Copilot license active'},
+    {v:'D', l:'Azure subscription with AI services'},
+    {v:'E', l:'Full estate: M365 E5/E7 + Azure AI + Fabric'},
+  ]},
+  { id:'T2', q:'AI build & customization capacity', g:'Build capacity is the most critical filter — it determines which product tier you can deploy', opts:[
+    {v:'A', l:'None — need turnkey out-of-the-box solutions'},
+    {v:'B', l:'Citizen developers (Power Platform / low-code)'},
+    {v:'C', l:'IT/fusion team — some dev + business partnership'},
+    {v:'D', l:'Professional developers (Azure-capable)'},
+    {v:'E', l:'Full AI/ML engineering team'},
+  ]},
+  { id:'T3', q:'Primary AI value domain', g:'The primary domain drives the product family recommendation (M365 vs Copilot Studio vs Azure AI)', opts:[
+    {v:'A', l:'Employee productivity & knowledge work'},
+    {v:'B', l:'Customer or citizen-facing experience'},
+    {v:'C', l:'Back-office operations & process automation'},
+    {v:'D', l:'Complex document intelligence & knowledge retrieval'},
+    {v:'E', l:'Real-time decisioning or autonomous multi-agent systems'},
+  ]},
+  { id:'T4', q:'Data & knowledge location', g:'Data location determines the grounding strategy and whether Azure Fabric is needed', opts:[
+    {v:'A', l:'Primarily in M365 (SharePoint, Teams, Outlook)'},
+    {v:'B', l:'CRM / ERP / line-of-business systems'},
+    {v:'C', l:'Structured databases + data warehouse'},
+    {v:'D', l:'Mix of cloud + on-prem + documents'},
+    {v:'E', l:'Azure Fabric / Data Lake + real-time sources'},
+  ]},
+  { id:'T5', q:'Industry regulatory sensitivity', g:'Regulatory sensitivity triggers governance overlay requirements (Purview, Content Safety, Agent 365)', opts:[
+    {v:'A', l:'Low — general commercial, no specific AI regulation'},
+    {v:'B', l:'Moderate — standard data protection applies'},
+    {v:'C', l:'High — financial services, insurance, legal'},
+    {v:'D', l:'Very high — healthcare, pharma, life sciences'},
+    {v:'E', l:'Critical — government, defense, critical infrastructure'},
+  ]},
+  { id:'T6', q:'Speed to first value needed', g:'Speed need sets the deployment pattern — quick win vs. structured program vs. multi-year transformation', opts:[
+    {v:'A', l:'Days — need a quick win now'},
+    {v:'B', l:'4–8 weeks — short pilot'},
+    {v:'C', l:'3–6 months — structured deployment'},
+    {v:'D', l:'6–12 months — enterprise transformation'},
+    {v:'E', l:'Multi-year strategic program'},
+  ]},
+];
+
+const GOVERNANCE_OVERLAYS = {
+  A: { label:'Standard', stack:['Microsoft Defender for Cloud AI','Basic audit logging (Microsoft Purview)','Entra ID + Conditional Access'], desc:'Basic protection for general commercial AI workloads. Covers identity, basic audit trail, and threat detection.' },
+  B: { label:'Standard +', stack:['Microsoft Defender for Cloud AI','Microsoft Purview — Data Classification + Sensitivity Labels','Entra ID + MFA + Conditional Access','Compliance Manager (baseline)'], desc:'Standard data protection layer with content classification and compliance tracking.' },
+  C: { label:'High Compliance', stack:['Microsoft Defender for Cloud AI + XDR','Microsoft Purview — Full DLP + eDiscovery + Retention','Compliance Manager (FSI/Legal profiles)','Entra ID + PIM + Zero Trust Network Access','Azure Policy — AI governance guardrails'], desc:'Full compliance stack for regulated industries. Mandatory for financial services, insurance, and legal sectors.' },
+  D: { label:'Healthcare/Pharma', stack:['Microsoft Defender for Cloud AI + XDR','Microsoft Purview — HIPAA/HITECH controls','Azure Health Data Services governance','Compliance Manager (HIPAA profiles)','Entra ID + PIM + RBAC fine-grained','Data residency + sovereign controls'], desc:'Healthcare-grade compliance with HIPAA/HITECH controls and health data governance.' },
+  E: { label:'Critical/Sovereign', stack:['Azure Government / Sovereign Cloud','Microsoft Defender for Cloud AI — mission critical','Custom AI Governance Framework (mandatory)','Full Purview — highest classification levels','Zero Trust — all layers mandatory','Azure Policy + custom compliance controls','Continuous security audit & reporting'], desc:'Maximum security posture for government and critical infrastructure. Sovereign cloud deployment may be required.' }
+};
+
+const SPEED_ROADMAPS = {
+  A: 'Start TODAY — enable M365 Copilot for a pilot group or select a Copilot Studio pre-built template. No code required. First value in days.',
+  B: '4–8 week pilot: Week 1–2 define success metrics + select pilot team; Week 3–4 configure and deploy; Week 5–6 onboard users; Week 7–8 measure outcomes and prepare go/no-go.',
+  C: '3–6 month deployment: Month 1 discovery & architecture; Month 2–3 controlled pilot (1 BU); Month 4–5 scaled rollout; Month 6 optimization & ROI measurement.',
+  D: '6–12 month enterprise transformation: Months 1–2 stakeholder alignment + governance setup; Months 3–5 architecture + change management; Months 6–9 phased adoption; Months 10–12 optimization + value realization.',
+  E: 'Multi-year strategic program: Phase 1 (Year 1) foundation + pilots; Phase 2 (Year 2) platform engineering + scaled deployment; Phase 3 (Year 3+) AI-native operating model + continuous improvement.'
+};
+
+const ISD_PORTFOLIO_DETAIL = {
+  'Platform Engineering': { offer:'Developer Experience with GitHub', intent:'Win developers with GitHub and drive them to Azure', value:'Empower developers with GitHub and AI-powered productivity tools. Accelerate software delivery with AI-assisted code generation, review, and testing.', color:'#0078D4' },
+  'Migrate & Modernize Your Estate': { offer:'Secure Migration & Modernization', intent:'Modernize applications, data & infrastructure for use within Azure Platform', value:'Migrate and modernize to Azure using an industrialized approach with automation and AI. Reduce risk, speed time-to-value, and maximize ROI.', color:'#2899f5' },
+  'Unify Your Data Platform': { offer:'Unify Your Data & Analytics Platform', intent:'Turn data into insights. Build a trusted, modern data platform.', value:'Modernize the enterprise data estate as a foundation for advanced analytics and AI/ML workloads. Deliver production-ready AI solutions directly from the unified platform.', color:'#00b7c3' },
+  'Innovate with AI Apps & Agents': { offer:'AI Scalability & Governance · Innovate with AI Apps · Agentic AI Transformation', intent:'Drive AI Transformation — from governed deployment to fully autonomous agents', value:'Design AI-powered applications, establish enterprise-scale AI governance, and develop autonomous agent systems that reason, plan, and act on behalf of users with minimal human input.', color:'#5c2d91' }
+};
+
+// Build tier from T2
+function buildTier(t2) {
+  if (t2 === 'A' || t2 === 'B') return 'LOW';
+  if (t2 === 'C') return 'MID';
+  return 'HIGH';
+}
+
+// Full prescription lookup (60 entries)
+const PRESCRIPTIONS = {
+  'Q1|LOW|A': { stack:'M365 Copilot + M365 Copilot Chat', entry:'Deploy to 50-user pilot team', action:'Set up M365 Copilot pilot, define adoption metrics, launch in 4 weeks', stu:'Modern Work STU', play:'Migrate & Modernize Your Estate + Innovate with AI Apps & Agents', offer:'Secure Migration & Modernization + Innovate with AI Apps', notes:'Deploy on clean Azure/M365 foundation' },
+  'Q1|LOW|B': { stack:'Copilot Studio — conversational templates', entry:'FAQ / support bot in 2 weeks', action:'Build first Copilot Studio bot using a pre-built template, no code required', stu:'Business Applications STU', play:'Innovate with AI Apps & Agents', offer:'Innovate with AI Apps', notes:'No-code entry point' },
+  'Q1|LOW|C': { stack:'AI Builder + Power Automate', entry:'First document automation workflow', action:'Identify highest-volume manual document process, automate with AI Builder', stu:'Business Applications STU', play:'Migrate & Modernize Your Estate + Innovate with AI Apps & Agents', offer:'Secure Migration & Modernization + Innovate with AI Apps', notes:'Modernize processes first' },
+  'Q1|LOW|D': { stack:'M365 Copilot + SharePoint + M365 Copilot Chat', entry:'Deploy Copilot, ground with SharePoint content', action:'Deploy M365 Copilot and configure SharePoint as knowledge source', stu:'Modern Work STU', play:'Migrate & Modernize Your Estate + Innovate with AI Apps & Agents', offer:'Secure Migration & Modernization + Innovate with AI Apps', notes:'Knowledge grounding on existing content' },
+  'Q1|LOW|E': { stack:'Copilot Studio — lightweight agent', entry:'Simple task agent for one workflow', action:'Pick one structured, well-defined workflow and deploy a Copilot Studio task agent', stu:'Business Applications STU', play:'Innovate with AI Apps & Agents', offer:'Innovate with AI Apps', notes:'Single-workflow scope' },
+  'Q1|MID|A': { stack:'M365 Copilot + Copilot Studio', entry:'Copilot + custom agent for one BU', action:'Deploy M365 Copilot to one BU, extend with a Copilot Studio agent in 6–8 weeks', stu:'Modern Work STU + Business Applications STU', play:'Innovate with AI Apps & Agents', offer:'Innovate with AI Apps', notes:'BU-level expansion' },
+  'Q1|MID|B': { stack:'Copilot Studio + Azure OpenAI', entry:'Conversational agent with LLM backend', action:'Build a Copilot Studio agent backed by Azure OpenAI for natural language interactions', stu:'Business Applications STU + Azure Data & AI STU', play:'Innovate with AI Apps & Agents', offer:'Innovate with AI Apps', secondary:'AI Scalability & Governance', notes:'LLM-backed conversational agent' },
+  'Q1|MID|C': { stack:'Power Automate + AI Builder + Copilot Studio', entry:'Intelligent process agent', action:'Combine Power Automate workflow with AI Builder + Copilot Studio for decision support', stu:'Business Applications STU', play:'Innovate with AI Apps & Agents', offer:'Innovate with AI Apps', notes:'Decision-support agent' },
+  'Q1|MID|D': { stack:'Azure AI Search + M365 Copilot', entry:'RAG-lite knowledge retrieval', action:'Index SharePoint content in Azure AI Search, surface via Copilot Chat for knowledge workers', stu:'Modern Work STU + Azure Data & AI STU', play:'Unify Your Data Platform + Innovate with AI Apps & Agents', offer:'Unify Your Data & Analytics Platform + Innovate with AI Apps', notes:'First data grounding layer' },
+  'Q1|MID|E': { stack:'Copilot Studio + Power Platform', entry:'Multi-step task agent', action:'Build multi-step Copilot Studio agent orchestrating Power Automate flows', stu:'Business Applications STU', play:'Innovate with AI Apps & Agents', offer:'Innovate with AI Apps', notes:'Multi-step orchestration' },
+  'Q1|HIGH|A': { stack:'M365 Copilot + Azure AI Foundry', entry:'Scoped Copilot extension pilot (1 declarative agent)', action:'Build and ship 1 declarative Copilot agent in Azure AI Foundry targeting a defined team workflow; measure weekly active usage at day 30', stu:'Modern Work STU + Azure Data & AI STU', play:'Innovate with AI Apps & Agents', offer:'AI Scalability & Governance', secondary:'Platform Engineering', notes:'Foundry-backed declarative agent' },
+  'Q1|HIGH|B': { stack:'Azure AI Foundry + Copilot Studio', entry:'Single-channel AI assistant pilot', action:'Deploy one Copilot Studio bot on Teams or web; validate intent coverage on top-10 user queries before expanding', stu:'Business Applications STU + Azure Data & AI STU', play:'Innovate with AI Apps & Agents', offer:'AI Scalability & Governance', notes:'Governed channel deployment' },
+  'Q1|HIGH|C': { stack:'Azure AI Foundry + Power Automate', entry:'One AI-enhanced process automation', action:'Map highest-volume manual process; automate the AI decision point with AI Builder + Power Automate Premium; measure FTE hours saved at day 30', stu:'Business Applications STU + Azure Data & AI STU', play:'Innovate with AI Apps & Agents', offer:'AI Scalability & Governance', secondary:'Migrate & Modernize Your Estate', notes:'Process-level AI governance' },
+  'Q1|HIGH|D': { stack:'Azure OpenAI + Azure AI Search + Azure AI Foundry', entry:'RAG prototype on 1 internal knowledge domain', action:"Index one SharePoint library with Azure AI Search; surface answers via Copilot Studio; validate answer accuracy with 5 internal users before scaling", stu:'Azure Data & AI STU + Modern Work STU', play:'Unify Your Data Platform + Innovate with AI Apps & Agents', offer:'Unify Your Data & Analytics Platform + AI Scalability & Governance', notes:'RAG foundation built on Foundry' },
+  'Q1|HIGH|E': { stack:'Azure AI Foundry + Semantic Kernel', entry:'Single-agent PoC on bounded workflow', action:'Define 1 autonomous workflow; build with Semantic Kernel on Azure AI Foundry; demo to sponsor stakeholder before any multi-agent design begins', stu:'Azure Data & AI STU', play:'Innovate with AI Apps & Agents', offer:'Agentic AI Transformation', secondary:'Platform Engineering', notes:'First agentic PoC' },
+  'Q2|LOW|A': { stack:'Copilot Studio task agents + M365 Copilot', entry:'Productivity agent for routine tasks', action:'Deploy M365 Copilot, add a Copilot Studio task agent for one recurring workflow', stu:'Modern Work STU + Business Applications STU', play:'Innovate with AI Apps & Agents', offer:'Innovate with AI Apps', notes:'Task-agent layer on Copilot' },
+  'Q2|LOW|B': { stack:'Copilot Studio task agents + Power Automate', entry:'Automate one rule-based customer process', action:'Build a Copilot Studio task agent handling a high-volume customer query type', stu:'Business Applications STU', play:'Innovate with AI Apps & Agents', offer:'Innovate with AI Apps', notes:'Rule-based customer automation' },
+  'Q2|LOW|C': { stack:'Copilot Studio + Power Automate', entry:'Back-office automation agent', action:'Identify highest-volume rule-based back-office process, build Copilot Studio task agent', stu:'Business Applications STU', play:'Migrate & Modernize Your Estate + Innovate with AI Apps & Agents', offer:'Secure Migration & Modernization + Innovate with AI Apps', notes:'Process modernization first' },
+  'Q2|LOW|D': { stack:'AI Builder + Power Automate + Copilot Studio', entry:'Document + knowledge automation', action:'Combine AI Builder document processing with Copilot Studio knowledge retrieval', stu:'Business Applications STU', play:'Migrate & Modernize Your Estate + Innovate with AI Apps & Agents', offer:'Secure Migration & Modernization + Innovate with AI Apps', notes:'Document intelligence layer' },
+  'Q2|LOW|E': { stack:'Copilot Studio + Azure OpenAI connector', entry:'Semi-autonomous workflow agent', action:'Connect Copilot Studio to Azure OpenAI for more complex decision-making in agents', stu:'Business Applications STU + Azure Data & AI STU', play:'Innovate with AI Apps & Agents', offer:'Innovate with AI Apps', secondary:'AI Scalability & Governance', notes:'Semi-autonomous decision agent' },
+  'Q2|MID|A': { stack:'M365 Copilot + Copilot Studio extended', entry:'Productivity + custom agents org-wide', action:'Deploy M365 Copilot org-wide + build custom Copilot agents per BU', stu:'Modern Work STU + Business Applications STU + Security STU', play:'Innovate with AI Apps & Agents', offer:'Innovate with AI Apps', secondary:'AI Scalability & Governance', notes:'Org-wide deployment + governance' },
+  'Q2|MID|B': { stack:'Copilot Studio + Azure OpenAI', entry:'Omnichannel customer service agent', action:'Build persistent, context-aware customer service agent on Copilot Studio + Azure OpenAI', stu:'Business Applications STU + Azure Data & AI STU + Security STU', play:'Innovate with AI Apps & Agents', offer:'Innovate with AI Apps', secondary:'AI Scalability & Governance', notes:'Omnichannel persistent agent' },
+  'Q2|MID|C': { stack:'Azure Logic Apps + Azure AI Services', entry:'Complex multi-system process automation', action:'Automate multi-system process using Logic Apps orchestration + Azure AI for decision points', stu:'Azure Data & AI STU + Security STU', play:'Migrate & Modernize Your Estate + Innovate with AI Apps & Agents', offer:'Secure Migration & Modernization + AI Scalability & Governance', notes:'Multi-system integration' },
+  'Q2|MID|D': { stack:'Azure OpenAI + Azure AI Search + Logic Apps', entry:'Automated knowledge workflow', action:'Automate knowledge-intensive workflows using RAG + Logic Apps orchestration', stu:'Azure Data & AI STU + Security STU', play:'Unify Your Data Platform + Innovate with AI Apps & Agents', offer:'Unify Your Data & Analytics Platform + AI Scalability & Governance', notes:'RAG-driven workflow automation' },
+  'Q2|MID|E': { stack:'Azure AI Foundry + Power Automate', entry:'Intelligent autonomous workflow', action:'Design autonomous workflow agent in AI Foundry, execute via Power Automate connectors', stu:'Business Applications STU + Azure Data & AI STU + Security STU', play:'Innovate with AI Apps & Agents', offer:'AI Scalability & Governance', secondary:'Agentic AI Transformation', notes:'First Foundry-powered agent' },
+  'Q2|HIGH|A': { stack:'M365 Copilot + AI Foundry extensions', entry:'Extended Copilot ecosystem', action:'Deploy M365 Copilot + develop AI Foundry extensions that feed back into Copilot', stu:'Modern Work STU + Azure Data & AI STU + Security STU', play:'Innovate with AI Apps & Agents', offer:'AI Scalability & Governance', secondary:'Agentic AI Transformation', notes:'Foundry-extended Copilot ecosystem' },
+  'Q2|HIGH|B': { stack:'Azure AI Foundry + Copilot Studio + GitHub Copilot', entry:'AI-accelerated dev with customer-facing agent', action:'Enable GitHub Copilot for dev team; ship first AI Foundry-backed Copilot Studio agent within 30 days', stu:'Business Applications STU + Azure Data & AI STU + Security STU', play:'Platform Engineering + Innovate with AI Apps & Agents', offer:'Developer Experience with GitHub + Innovate with AI Apps', secondary:'Agentic AI Transformation', notes:'Dev acceleration + AI delivery' },
+  'Q2|HIGH|C': { stack:'Azure AI Foundry + Logic Apps + AI Services', entry:'Autonomous operational agents', action:'Design multi-step autonomous operations agents orchestrated by AI Foundry', stu:'Azure Data & AI STU + Security STU', play:'Innovate with AI Apps & Agents', offer:'AI Scalability & Governance', secondary:'Agentic AI Transformation', notes:'Autonomous ops at scale' },
+  'Q2|HIGH|D': { stack:'Azure AI Foundry + Azure AI Search + Microsoft Fabric', entry:'Unified analytics and AI knowledge layer', action:'Connect Fabric OneLake to Azure AI Search; expose insights via a Copilot extension; validate retrieval quality on 3 key business questions', stu:'Azure Data & AI STU + Modern Work STU + Security STU', play:'Unify Your Data Platform + Innovate with AI Apps & Agents', offer:'Unify Your Data & Analytics Platform + AI Scalability & Governance', secondary:'Agentic AI Transformation', notes:'Fabric-grounded AI knowledge layer' },
+  'Q2|HIGH|E': { stack:'Azure AI Foundry + Semantic Kernel + GitHub Copilot', entry:'Multi-agent orchestration PoC with dev acceleration', action:'Use GitHub Copilot to build Semantic Kernel plugins; deploy 2-agent orchestration PoC in AI Foundry; document agent handoff patterns for team reuse', stu:'Azure Data & AI STU + Security STU', play:'Platform Engineering + Innovate with AI Apps & Agents', offer:'Developer Experience with GitHub + Agentic AI Transformation', notes:'Dev-accelerated multi-agent PoC' },
+  'Q3|LOW|A': { stack:'M365 Copilot + SharePoint Agents', entry:'Enterprise knowledge Copilot', action:'Deploy M365 Copilot org-wide + build SharePoint agents for each knowledge domain', stu:'Modern Work STU + Azure Data & AI STU', play:'Migrate & Modernize Your Estate + Innovate with AI Apps & Agents', offer:'Secure Migration & Modernization + Innovate with AI Apps', notes:'Org-wide knowledge layer' },
+  'Q3|LOW|B': { stack:'Copilot Studio + Azure OpenAI', entry:'AI-powered customer experience', action:'Build sophisticated customer experience agent on Copilot Studio with Azure OpenAI backend', stu:'Business Applications STU + Azure Data & AI STU', play:'Innovate with AI Apps & Agents', offer:'Innovate with AI Apps', secondary:'AI Scalability & Governance', notes:'Complex customer-facing agent' },
+  'Q3|LOW|C': { stack:'Copilot Studio + Power Platform', entry:'Process orchestration agents', action:'Deploy process orchestration agents using Copilot Studio coordinating Power Automate flows', stu:'Business Applications STU + Azure Data & AI STU', play:'Migrate & Modernize Your Estate + Innovate with AI Apps & Agents', offer:'Secure Migration & Modernization + Innovate with AI Apps', notes:'Orchestration on modernized processes' },
+  'Q3|LOW|D': { stack:'Azure OpenAI + Azure AI Search', entry:'RAG knowledge assistant — first pilot', action:'Build RAG pipeline on M365 content corpus, deploy as internal knowledge assistant', stu:'Azure Data & AI STU', play:'Unify Your Data Platform', offer:'Unify Your Data & Analytics Platform', notes:'Data-first approach for complex orgs' },
+  'Q3|LOW|E': { stack:'Azure AI Foundry + Copilot Studio', entry:'Entry-level orchestration agent', action:'Deploy first orchestration agent in AI Foundry with Copilot Studio as user interface', stu:'Business Applications STU + Azure Data & AI STU', play:'Innovate with AI Apps & Agents', offer:'AI Scalability & Governance', secondary:'Agentic AI Transformation', notes:'Entry into Foundry orchestration' },
+  'Q3|MID|A': { stack:'M365 Copilot + AI Foundry + SharePoint', entry:'Enterprise knowledge platform', action:'Extend M365 Copilot with AI Foundry skills grounded in enterprise SharePoint knowledge', stu:'Modern Work STU + Azure Data & AI STU', play:'Unify Your Data Platform + Innovate with AI Apps & Agents', offer:'Unify Your Data & Analytics Platform + Innovate with AI Apps', secondary:'AI Scalability & Governance', notes:'Foundry-grounded enterprise knowledge' },
+  'Q3|MID|B': { stack:'Azure OpenAI + Copilot Studio + AI Foundry', entry:'Sophisticated customer AI experience', action:'Architect multi-modal customer experience agent with AI Foundry orchestration', stu:'Business Applications STU + Azure Data & AI STU', play:'Innovate with AI Apps & Agents', offer:'Innovate with AI Apps', secondary:'AI Scalability & Governance', notes:'Multi-modal customer agent' },
+  'Q3|MID|C': { stack:'Azure AI Foundry + Logic Apps', entry:'Intelligent process orchestration', action:'Orchestrate complex multi-system processes with AI Foundry + Logic Apps integration', stu:'Azure Data & AI STU', play:'Migrate & Modernize Your Estate + Innovate with AI Apps & Agents', offer:'Secure Migration & Modernization + AI Scalability & Governance', notes:'AI-driven process orchestration' },
+  'Q3|MID|D': { stack:'Azure OpenAI + AI Search + AI Foundry', entry:'Enterprise RAG platform', action:'Build production RAG platform on AI Foundry, grounding on multi-source enterprise data', stu:'Azure Data & AI STU', play:'Unify Your Data Platform + Innovate with AI Apps & Agents', offer:'Unify Your Data & Analytics Platform + AI Scalability & Governance', notes:'Multi-source enterprise RAG' },
+  'Q3|MID|E': { stack:'Azure AI Foundry + M365 Agents SDK', entry:'Enterprise agent orchestration', action:'Build enterprise orchestration agent using AI Foundry + M365 Agents SDK with human-in-loop', stu:'Azure Data & AI STU', play:'Innovate with AI Apps & Agents', offer:'Agentic AI Transformation', secondary:'AI Scalability & Governance', notes:'Human-in-the-loop orchestration' },
+  'Q3|HIGH|A': { stack:'Azure AI Foundry + M365 Copilot + Fabric', entry:'AI-native knowledge platform', action:'Architect AI-native knowledge platform combining Fabric data, Foundry orchestration, M365 Copilot', stu:'Modern Work STU + Azure Data & AI STU', play:'Unify Your Data Platform + Innovate with AI Apps & Agents', offer:'Unify Your Data & Analytics Platform + Innovate with AI Apps', secondary:'Agentic AI Transformation', notes:'Full Fabric + Foundry + M365 architecture' },
+  'Q3|HIGH|B': { stack:'Azure AI Foundry + Copilot Studio + GitHub Copilot', entry:'Production AI app with dev acceleration loop', action:'Use GitHub Copilot to accelerate AI Foundry SDK integration; deploy customer-facing agent to production; instrument with AI Foundry observability dashboard', stu:'Business Applications STU + Azure Data & AI STU', play:'Platform Engineering + Innovate with AI Apps & Agents', offer:'Developer Experience with GitHub + Agentic AI Transformation', secondary:'AI Scalability & Governance', notes:'Production AI with dev acceleration' },
+  'Q3|HIGH|C': { stack:'Azure AI Foundry + Document Intelligence + Purview', entry:'Intelligent regulated process platform', action:'Architect intelligent process platform with full governance via Purview + AI Foundry', stu:'Azure Data & AI STU + Security STU', play:'Innovate with AI Apps & Agents', offer:'AI Scalability & Governance', secondary:'Agentic AI Transformation', notes:'Governance-first intelligent processes' },
+  'Q3|HIGH|D': { stack:'Azure AI Foundry + Microsoft Fabric + Azure AI Search', entry:'Enterprise AI-ready data platform', action:'Activate Fabric Real-Time Intelligence on 1 operational data stream; integrate AI Foundry prediction layer; define KPIs for data freshness and model accuracy', stu:'Azure Data & AI STU', play:'Unify Your Data Platform + Innovate with AI Apps & Agents', offer:'Unify Your Data & Analytics Platform + Agentic AI Transformation', notes:'Real-time Fabric intelligence' },
+  'Q3|HIGH|E': { stack:'Azure AI Foundry + Semantic Kernel + GitHub Copilot', entry:'Enterprise multi-agent system (production-ready)', action:'Deploy 3+ agent system with Semantic Kernel orchestration; integrate GitHub Copilot in dev pipeline; establish agent monitoring via AI Foundry observability', stu:'Azure Data & AI STU', play:'Platform Engineering + Innovate with AI Apps & Agents', offer:'Developer Experience with GitHub + Agentic AI Transformation', notes:'Production multi-agent + dev pipeline' },
+  'Q4|LOW|A': { stack:'M365 Copilot + Azure AI Foundry', entry:'Agent-augmented workforce pilot', action:'Deploy AI Foundry agents that augment M365 Copilot for knowledge workers', stu:'Modern Work STU + Azure Data & AI STU', play:'Migrate & Modernize Your Estate + Innovate with AI Apps & Agents', offer:'Secure Migration & Modernization + Agentic AI Transformation', notes:'Agent-augmented workforce' },
+  'Q4|LOW|B': { stack:'Copilot Studio + Azure AI Foundry', entry:'AI-native customer experience', action:'Redesign customer experience around AI Foundry agents surfaced via Copilot Studio', stu:'Business Applications STU + Azure Data & AI STU', play:'Innovate with AI Apps & Agents', offer:'Agentic AI Transformation', secondary:'AI Scalability & Governance', notes:'AI-native CX redesign' },
+  'Q4|LOW|C': { stack:'Azure AI Foundry + Power Automate', entry:'Autonomous operations pilot', action:'Deploy first autonomous operations agent in AI Foundry with Power Automate execution layer', stu:'Business Applications STU + Azure Data & AI STU', play:'Innovate with AI Apps & Agents', offer:'Agentic AI Transformation', notes:'First autonomous ops agent' },
+  'Q4|LOW|D': { stack:'Azure AI Foundry + AI Search + Fabric', entry:'AI-native knowledge operations', action:'Build AI-native knowledge operations: AI Foundry + Fabric data + AI Search retrieval', stu:'Azure Data & AI STU', play:'Unify Your Data Platform + Innovate with AI Apps & Agents', offer:'Unify Your Data & Analytics Platform + Agentic AI Transformation', notes:'Fabric-grounded knowledge operations' },
+  'Q4|LOW|E': { stack:'Azure AI Foundry + Semantic Kernel', entry:'Multi-agent architecture — first sprint', action:'Run a 2-week multi-agent architecture sprint, deploy first autonomous workflow', stu:'Azure Data & AI STU', play:'Innovate with AI Apps & Agents', offer:'Agentic AI Transformation', secondary:'Platform Engineering', notes:'First multi-agent sprint' },
+  'Q4|MID|A': { stack:'Azure AI Foundry + M365 Agents SDK + Copilot', entry:'AI-first workforce transformation', action:'Transform workforce workflows with AI Foundry agents embedded in M365 experiences', stu:'Modern Work STU + Azure Data & AI STU', play:'Innovate with AI Apps & Agents', offer:'Agentic AI Transformation', secondary:'AI Scalability & Governance', notes:'M365-embedded agentic transformation' },
+  'Q4|MID|B': { stack:'Azure AI Foundry + Azure OpenAI + Copilot Studio', entry:'Autonomous customer ops platform', action:'Build fully autonomous customer operations platform on AI Foundry', stu:'Business Applications STU + Azure Data & AI STU', play:'Innovate with AI Apps & Agents', offer:'Agentic AI Transformation', secondary:'AI Scalability & Governance', notes:'Fully autonomous customer ops' },
+  'Q4|MID|C': { stack:'Azure AI Foundry + Semantic Kernel + Fabric', entry:'Autonomous operations platform', action:'Architect autonomous operations platform: AI Foundry + Semantic Kernel + Fabric data', stu:'Azure Data & AI STU', play:'Unify Your Data Platform + Innovate with AI Apps & Agents', offer:'Unify Your Data & Analytics Platform + Agentic AI Transformation', notes:'Fabric-backed autonomous operations' },
+  'Q4|MID|D': { stack:'Azure AI Foundry + Document Intelligence + Fabric', entry:'AI-native document operations', action:'Build AI-native document intelligence operations — autonomous, governed, real-time', stu:'Azure Data & AI STU + Security STU', play:'Unify Your Data Platform + Innovate with AI Apps & Agents', offer:'Unify Your Data & Analytics Platform + AI Scalability & Governance', secondary:'Agentic AI Transformation', notes:'Governed AI-native document ops' },
+  'Q4|MID|E': { stack:'Azure AI Foundry + Semantic Kernel + AutoGen', entry:'Multi-agent platform MVP', action:'Build and deploy multi-agent platform MVP: AI Foundry + Semantic Kernel + AutoGen', stu:'Azure Data & AI STU', play:'Innovate with AI Apps & Agents', offer:'Agentic AI Transformation', secondary:'Platform Engineering', notes:'Multi-agent MVP delivery' },
+  'Q4|HIGH|A': { stack:'Azure AI Foundry + fine-tuning + M365 agents', entry:'Custom-model knowledge agents', action:'Fine-tune foundation model on org data, deploy as knowledge agents across M365', stu:'Modern Work STU + Azure Data & AI STU', play:'Innovate with AI Apps & Agents', offer:'Agentic AI Transformation', secondary:'AI Scalability & Governance', notes:'Fine-tuned custom model deployment' },
+  'Q4|HIGH|B': { stack:'Azure AI Foundry + Copilot Studio + GitHub Copilot', entry:'AI-native product with continuous improvement loop', action:'Ship AI Foundry-powered feature with GitHub Copilot-accelerated dev cycle; establish evaluation pipeline; set monthly model improvement cadence', stu:'Business Applications STU + Azure Data & AI STU', play:'Platform Engineering + Innovate with AI Apps & Agents', offer:'Developer Experience with GitHub + Agentic AI Transformation', secondary:'AI Scalability & Governance', notes:'Continuous AI improvement loop' },
+  'Q4|HIGH|C': { stack:'Azure AI Foundry + AutoGen + Fabric', entry:'Autonomous operations network', action:'Architect autonomous operations agent network: AutoGen orchestration + Fabric data backbone', stu:'Azure Data & AI STU', play:'Unify Your Data Platform + Innovate with AI Apps & Agents', offer:'Unify Your Data & Analytics Platform + Agentic AI Transformation', notes:'Autonomous agent network on Fabric' },
+  'Q4|HIGH|D': { stack:'Azure AI Foundry + Microsoft Fabric + Azure AI Search + Azure OpenAI', entry:'AI-native enterprise intelligence platform', action:'Deploy Fabric mirroring for core data sources; build AI Foundry agent with Fabric as grounding layer; activate real-time AI-driven decisions on 1 live business process', stu:'Azure Data & AI STU + Business Applications STU', play:'Unify Your Data Platform + Innovate with AI Apps & Agents', offer:'Unify Your Data & Analytics Platform + Agentic AI Transformation', secondary:'AI Scalability & Governance', notes:'Full enterprise AI intelligence platform' },
+  'Q4|HIGH|E': { stack:'Azure AI Foundry + Semantic Kernel + GitHub Copilot + M365 Agents SDK', entry:'Autonomous enterprise agent ecosystem', action:'Orchestrate cross-system agents with Semantic Kernel; use GitHub Copilot to accelerate plugin development; connect to M365 via Agents SDK; measure autonomous task completion rate weekly', stu:'Azure Data & AI STU + Business Applications STU', play:'Platform Engineering + Unify Your Data Platform + Innovate with AI Apps & Agents', offer:'Developer Experience with GitHub + Unify Your Data & Analytics Platform + Agentic AI Transformation', secondary:'AI Scalability & Governance', notes:'Full ecosystem transformation' },
+};
+
+const QUADRANT_META = {
+  Q1: { label:'Q1 — AUGMENT',  desc:'Low Autonomy · Low Complexity',  color:'#e8f3fb', textColor:'#0a4f7a', accent:'#0078D4' },
+  Q2: { label:'Q2 — AUTOMATE', desc:'High Autonomy · Low Complexity',  color:'#e6f7e6', textColor:'#0a5c0a', accent:'#107c10' },
+  Q3: { label:'Q3 — ORCHESTRATE',desc:'Low Autonomy · High Complexity', color:'#fff4e5', textColor:'#7a4f1a', accent:'#f7630c' },
+  Q4: { label:'Q4 — TRANSFORM', desc:'High Autonomy · High Complexity', color:'#f0eafa', textColor:'#3a1a6e', accent:'#5c2d91' },
+};
+
+const MATURITY_LEVELS = [
+  { range:[1.0, 1.8],  label:'Level 1 — Nascent',     color:'#d13438', bg:'#fde7e9' },
+  { range:[1.8, 2.6],  label:'Level 2 — Emerging',    color:'#f7630c', bg:'#fff4e5' },
+  { range:[2.6, 3.4],  label:'Level 3 — Structured',  color:'#0078D4', bg:'#e8f3fb' },
+  { range:[3.4, 4.2],  label:'Level 4 — Integrated',  color:'#107c10', bg:'#e6f7e6' },
+  { range:[4.2, 5.01], label:'Level 5 — Adaptive',    color:'#5c2d91', bg:'#f0eafa' },
+];
+
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+let scores = {}; // questionId → 1..5
+let techAnswers = {}; // T1..T6 → A..E
+let radarChart = null;
+
+// ══════════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════════
+function showSection(id) {
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  const nb = document.getElementById('nav-' + id);
+  if (nb) nb.classList.add('active');
+  updateProgressBar(id);
+  if (id === 'results') renderResults();
+  window.scrollTo(0, 0);
+}
+
+function updateProgressBar(id) {
+  const steps = document.querySelectorAll('.progress-step');
+  const map = ['overview', 'assessment', 'techprofile', 'results'];
+  const idx = map.indexOf(id);
+  steps.forEach((s, i) => {
+    s.classList.remove('done', 'active');
+    if (i < idx) s.classList.add('done');
+    else if (i === idx) s.classList.add('active');
+  });
+  const pct = idx < 0 ? 0 : (idx / (map.length - 1)) * 100;
+  document.getElementById('progressSteps').style.setProperty('--prog', pct + '%');
+}
+
+function goToTechProfile() {
+  showSection('techprofile');
+}
+
+function goToResults() {
+  showSection('results');
+}
+
+// ══════════════════════════════════════════════════════════
+// CALCULATIONS
+// ══════════════════════════════════════════════════════════
+function pillarAvg(p) {
+  const qs = QUESTIONS.filter(q => q.p === p);
+  const answered = qs.filter(q => scores[q.id]);
+  if (!answered.length) return null;
+  return answered.reduce((s, q) => s + scores[q.id], 0) / answered.length;
+}
+
+function axisA() {
+  const p1 = pillarAvg(1), p2 = pillarAvg(2), p4 = pillarAvg(4);
+  const vals = [p1, p2, p4].filter(v => v !== null);
+  return vals.length ? vals.reduce((a, b) => a + b) / vals.length : null;
+}
+function axisB() {
+  const p3 = pillarAvg(3), p5 = pillarAvg(5), p6 = pillarAvg(6);
+  const vals = [p3, p5, p6].filter(v => v !== null);
+  return vals.length ? vals.reduce((a, b) => a + b) / vals.length : null;
+}
+function overallScore() {
+  const avgs = [1,2,3,4,5,6,7].map(p => pillarAvg(p)).filter(v => v !== null);
+  return avgs.length ? avgs.reduce((a, b) => a + b) / avgs.length : null;
+}
+function getQuadrant() {
+  const a = axisA(), b = axisB();
+  if (a === null || b === null) return null;
+  const highA = a >= 3.0, highB = b >= 3.0;
+  if (!highA && !highB) return 'Q1';
+  if (highA && !highB) return 'Q2';
+  if (!highA && highB) return 'Q3';
+  return 'Q4';
+}
+function getMaturity(score) {
+  if (score === null) return null;
+  return MATURITY_LEVELS.find(m => score >= m.range[0] && score < m.range[1]);
+}
+function getPrescription() {
+  const q = getQuadrant();
+  const t2 = techAnswers['T2'];
+  const t3 = techAnswers['T3'];
+  if (!q || !t2 || !t3) return null;
+  const key = `${q}|${buildTier(t2)}|${t3}`;
+  return { key, ...PRESCRIPTIONS[key] };
+}
+function answeredCount() {
+  return QUESTIONS.filter(q => scores[q.id]).length;
+}
+function allAnswered() {
+  return answeredCount() === 35;
+}
+
+// ══════════════════════════════════════════════════════════
+// RENDER ASSESSMENT
+// ══════════════════════════════════════════════════════════
+function renderAssessment() {
+  const container = document.getElementById('assessment-questions');
+  container.innerHTML = '';
+  PILLARS.forEach(pillar => {
+    const qs = QUESTIONS.filter(q => q.p === pillar.id);
+    const block = document.createElement('div');
+    block.className = 'pillar-block';
+    block.id = `pillar-block-${pillar.id}`;
+
+    const header = document.createElement('div');
+    header.className = 'pillar-header';
+    header.innerHTML = `
+      <div class="pillar-header-num">${pillar.id}</div>
+      <div class="pillar-header-text">
+        <div class="pillar-header-title">${pillar.name}</div>
+        <div class="pillar-header-sub">Axis ${pillar.axis} — ${pillar.axisName}</div>
+      </div>
+      <div class="pillar-header-score" id="pillar-score-${pillar.id}">—</div>
+      <div class="pillar-header-chevron" id="pillar-chev-${pillar.id}">▼</div>
+    `;
+    header.onclick = () => togglePillar(pillar.id);
+    block.appendChild(header);
+
+    const body = document.createElement('div');
+    body.className = 'pillar-body' + (pillar.id > 1 ? ' collapsed' : '');
+    body.id = `pillar-body-${pillar.id}`;
+
+    qs.forEach(q => {
+      const row = document.createElement('div');
+      row.className = 'question-row';
+      row.innerHTML = `
+        <div class="q-num">Q ${q.id}</div>
+        <div class="q-text">${q.q}</div>
+        <div class="q-anchors">
+          <div class="q-anchor"><strong>Score 1</strong>${q.s1}</div>
+          <div class="q-anchor" style="text-align:right"><strong>Score 5</strong>${q.s5}</div>
+        </div>
+        <div class="score-buttons" id="score-btns-${q.id.replace('.','_')}">
+          ${[1,2,3,4,5].map(n => `
+            <button class="score-btn ${scores[q.id]===n?'selected':''}" onclick="setScore('${q.id}',${n})" title="${n}">${n}</button>
+          `).join('')}
+        </div>
+        <div class="score-label" id="score-label-${q.id.replace('.','_')}" style="color:var(--muted);font-size:11px">&nbsp;</div>
+      `;
+      body.appendChild(row);
+    });
+
+    block.appendChild(body);
+    container.appendChild(block);
+    updatePillarScore(pillar.id);
+  });
+}
+
+function togglePillar(id) {
+  const body = document.getElementById(`pillar-body-${id}`);
+  const chev = document.getElementById(`pillar-chev-${id}`);
+  body.classList.toggle('collapsed');
+  chev.textContent = body.classList.contains('collapsed') ? '▶' : '▼';
+}
+
+function setScore(qid, val) {
+  scores[qid] = val;
+  // Update buttons — use getElementById to avoid dot-in-ID CSS selector ambiguity
+  const container = document.getElementById(`score-btns-${qid.replace('.','_')}`);
+  if (container) container.querySelectorAll('.score-btn').forEach((b, i) => b.classList.toggle('selected', i + 1 === val));
+  // Update pillar score
+  const q = QUESTIONS.find(q => q.id === qid);
+  updatePillarScore(q.p);
+  // Update total count
+  const cnt = answeredCount();
+  document.getElementById('answered-count').textContent = `${cnt} of 35`;
+}
+
+function updatePillarScore(pid) {
+  const avg = pillarAvg(pid);
+  const el = document.getElementById(`pillar-score-${pid}`);
+  if (el) el.textContent = avg !== null ? avg.toFixed(1) : '—';
+}
+
+// ══════════════════════════════════════════════════════════
+// RENDER TECH PROFILE
+// ══════════════════════════════════════════════════════════
+function renderTechProfile() {
+  const container = document.getElementById('tech-profile-questions');
+  container.innerHTML = '';
+  TECH_QUESTIONS.forEach(tq => {
+    const block = document.createElement('div');
+    block.className = 'card tq-block';
+    block.innerHTML = `
+      <div class="tq-header">
+        <span class="tq-id">${tq.id}</span>
+        <span class="tq-text">${tq.q}</span>
+      </div>
+      <div class="tq-guidance">${tq.g}</div>
+      <div class="tq-options" id="tq-opts-${tq.id}">
+        ${tq.opts.map(o => `
+          <label class="tq-opt ${techAnswers[tq.id]===o.v?'selected':''}" id="tq-opt-${tq.id}-${o.v}">
+            <input type="radio" name="${tq.id}" value="${o.v}" ${techAnswers[tq.id]===o.v?'checked':''} onchange="setTech('${tq.id}','${o.v}')">
+            <span class="tq-opt-label"><span class="tq-opt-val">${o.v}</span>${o.l}</span>
+          </label>
+        `).join('')}
+      </div>
+    `;
+    container.appendChild(block);
+  });
+}
+
+function setTech(tid, val) {
+  techAnswers[tid] = val;
+  document.querySelectorAll(`#tq-opts-${tid} .tq-opt`).forEach(el => {
+    const inp = el.querySelector('input');
+    el.classList.toggle('selected', inp.value === val);
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+// HELPER — EXPANDED PRESCRIPTION HTML
+// ══════════════════════════════════════════════════════════
+function buildExtraPrescrHTML(presc, govOverlay, speedRoadmap, isdPlays, t6Label, qMeta) {
+  let html = '';
+
+  // STU Teams
+  if (presc) {
+    html += '<div class="card" style="border-left:4px solid #00b7c3;margin-top:0">' +
+      '<div class="card-title">\uD83D\uDC65 STU / Specialist Teams to Engage</div>' +
+      '<div class="card-sub">Microsoft specialist teams recommended for this engagement based on your quadrant and domain</div>' +
+      '<div class="stu-grid">' +
+      presc.stu.split('+').map(function(s){ return '<span class="stu-badge">' + s.trim() + '</span>'; }).join('') +
+      '</div></div>';
+  }
+
+  // ISD Solution Plays
+  if (presc && isdPlays.length) {
+    var playsHTML = isdPlays.map(function(key) {
+      var info = ISD_PORTFOLIO_DETAIL[key];
+      return '<div class="portfolio-card" style="border-left-color:' + info.color + '">' +
+        '<div class="portfolio-play">' + key + '</div>' +
+        '<div class="portfolio-offer">' + info.offer + '</div>' +
+        '<div class="portfolio-intent">' + info.intent + '</div>' +
+        '<div class="portfolio-value">' + info.value + '</div>' +
+      '</div>';
+    }).join('');
+    html += '<div class="card">' +
+      '<div class="card-title">\uD83C\uDFAF ISD FY26 Solution Plays</div>' +
+      '<div class="card-sub">Cloud &amp; AI Platforms Portfolio — recommended for ' + (qMeta ? qMeta.label : '') + '</div>' +
+      '<div class="portfolio-grid" style="margin-top:1rem">' + playsHTML + '</div>' +
+      '<div style="background:var(--pill-bg);border:1px solid #d0e4f8;border-radius:6px;padding:12px 16px;margin-top:12px">' +
+        '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:6px">Recommended ISD Offers</div>' +
+        '<div style="font-size:14px;font-weight:700;color:var(--ms-navy)">' + presc.offer + '</div>' +
+        (presc.secondary ? '<div style="font-size:12px;color:var(--muted);margin-top:4px">Secondary: ' + presc.secondary + '</div>' : '') +
+      '</div></div>';
+  }
+
+  // Security & Governance Layers
+  if (govOverlay) {
+    html += '<div class="card" style="border-left:4px solid #d83b01">' +
+      '<div class="card-title">\uD83D\uDEE1\uFE0F Security &amp; Governance Layers &nbsp;<span class="tag" style="background:#fff4e5;color:#d83b01;font-size:11px">' + govOverlay.label + '</span></div>' +
+      '<div class="card-sub">' + govOverlay.desc + '</div>' +
+      '<div class="security-grid">' +
+      govOverlay.stack.map(function(l){ return '<div class="security-layer"><div class="security-layer-name">' + l + '</div></div>'; }).join('') +
+      '</div>' +
+      '<div style="background:#fff4e5;border:1px solid #f7b14b;border-radius:4px;padding:8px 12px;margin-top:12px;font-size:12px;color:#7a4f1a">' +
+      '\uD83D\uDD10 <strong>Zero Trust:</strong> All AI agent interactions should follow identity-first, least-privilege, and assume-breach posture — regardless of regulatory tier.' +
+      '</div></div>';
+  }
+
+  // Speed-to-Value Roadmap
+  if (speedRoadmap) {
+    html += '<div class="card" style="border-left:4px solid var(--ms-green)">' +
+      '<div class="card-title">\u23F1\uFE0F Speed-to-Value Roadmap &nbsp;<span class="tag" style="background:#e6f7e6;color:var(--ms-green);font-size:11px">' + t6Label + '</span></div>' +
+      '<div style="font-size:14px;font-weight:500;color:var(--text);line-height:1.7">' + speedRoadmap + '</div>' +
+      '</div>';
+  }
+
+  // Recommended Next Steps
+  if (presc) {
+    var steps = [
+      { title:'Week 1–2: Validate this prescription', text:'Run a 1-hour discovery call with the customer. Confirm T1–T6 answers and refine the quadrant position if needed. Align on the entry point action.' },
+      { title:'Week 2–3: Schedule the Social Architecture Workshop', text:'Plan a full-day session. Share this completed tool with all participants as pre-work. Aggregate scores to reveal organizational alignment and divergence.' },
+      { title:'Workshop Day: Run Module 5 — Technology Match', text:'Use this prescription as the baseline. Apply the BXT Decision Framework: <a href="https://microsoft.github.io/Microsoft-AI-Decision-Framework" target="_blank" style="color:var(--ms-blue)">microsoft.github.io/Microsoft-AI-Decision-Framework</a>' },
+      { title:'Post-Workshop: Execute the 30-day entry point', text: presc.action + '<br>Book a 30-day checkpoint to measure Pillar 1 and Pillar 2 progress against baseline scores.' }
+    ];
+    html += '<div class="card"><div class="card-title">\uD83D\uDCC5 Recommended Next Steps</div>' +
+      steps.map(function(s, i){ return '<div class="next-step-item"><div class="next-step-num">' + (i+1) + '</div>' +
+        '<div><div class="next-step-title">' + s.title + '</div><div class="next-step-text">' + s.text + '</div></div></div>'; }).join('') +
+      '</div>';
+  }
+
+  return html;
+}
+
+// ══════════════════════════════════════════════════════════
+// RENDER RESULTS
+// ══════════════════════════════════════════════════════════
+function wrapLabel(text, maxLen = 18) {
+  const clean = text.replace(/&amp;/g, '&'); // decodifica HTML entities
+  const words = clean.split(' ');
+  const lines = [];
+  let line = '';
+
+  for (const w of words) {
+    const test = line ? `${line} ${w}` : w;
+    if (test.length > maxLen) {
+      if (line) lines.push(line);
+      line = w;
+    } else {
+      line = test;
+    }
+  }
+  if (line) lines.push(line);
+
+  // forziamo max 2 righe (se vuoi)
+  if (lines.length > 2) {
+    return [lines[0], lines.slice(1).join(' ')]; 
+  }
+  return lines;
+}
+
+function renderResults() {
+  const container = document.getElementById('results-content');
+  const overall = overallScore();
+  const maturity = getMaturity(overall);
+  const quadrant = getQuadrant();
+  const qMeta = quadrant ? QUADRANT_META[quadrant] : null;
+  const presc = getPrescription();
+  const axA = axisA(), axB = axisB();
+
+  if (!overall) {
+    container.innerHTML = `
+      <div class="card" style="text-align:center; padding:3rem">
+        <div style="font-size:48px;margin-bottom:1rem">📊</div>
+        <div style="font-size:18px;font-weight:700;color:var(--ms-navy);margin-bottom:0.5rem">Complete the Assessment First</div>
+        <p style="color:var(--muted);margin-bottom:1.5rem">Answer the 35 questions in the Assessment tab to see your results and technology prescription.</p>
+        <button class="btn btn-primary" onclick="showSection('assessment')">Go to Assessment →</button>
+      </div>`;
+    return;
+  }
+
+  // Pillar data for chart
+  const pillarScores = PILLARS.map(p => ({ name: p.name.split(' ')[0] + ' ' + p.name.split(' ')[1], score: pillarAvg(p.id) || 0, color: p.color }));
+
+  // Expanded prescription data
+  const govOverlay = GOVERNANCE_OVERLAYS[techAnswers['T5']] || null;
+  const speedRoadmap = techAnswers['T6'] ? SPEED_ROADMAPS[techAnswers['T6']] : null;
+  const t6Label = techAnswers['T6'] ? (TECH_QUESTIONS.find(t => t.id === 'T6').opts.find(o => o.v === techAnswers['T6']) || {l:''}).l : '';
+  const isdPlays = [];
+  if (presc) {
+    [presc.play, presc.secondary].filter(Boolean).forEach(p => {
+      p.split('+').map(s => s.trim()).forEach(s => {
+        const k = Object.keys(ISD_PORTFOLIO_DETAIL).find(key =>
+          key === 'Innovate with AI Apps & Agents' ? s.includes('Innovate with AI') : s.includes(key)
+        );
+        if (k && !isdPlays.includes(k)) isdPlays.push(k);
+      });
+    });
+  }
+
+  container.innerHTML = `
+    <!-- SCORE SUMMARY -->
+    <div class="results-grid">
+      <div class="card score-hero">
+        <div style="font-size:13px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Overall Score</div>
+        <div class="score-big">${overall.toFixed(2)}</div>
+        <div class="score-label-big">out of 5.00</div>
+        ${maturity ? `<div class="maturity-badge" style="background:${maturity.bg};color:${maturity.color}">${maturity.label}</div>` : ''}
+        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Axis A — Autonomy Readiness</div>
+          <div style="font-size:20px;font-weight:800;color:var(--ms-navy)">${axA ? axA.toFixed(2) : '—'}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px;margin-bottom:4px">Axis B — Org Complexity</div>
+          <div style="font-size:20px;font-weight:800;color:var(--ms-navy)">${axB ? axB.toFixed(2) : '—'}</div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-size:13px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Quadrant Position</div>
+        <div class="quadrant-grid">
+          ${['Q3','Q4','Q1','Q2'].map(q => {
+            const m = QUADRANT_META[q];
+            const isActive = q === quadrant;
+            return `<div class="q-cell${isActive?' active':''}" style="background:${m.color}">
+              <div class="q-cell-label" style="color:${m.accent}">${q}</div>
+              <div class="q-cell-name" style="color:${m.textColor}">${m.label.split('—')[1].trim()}</div>
+              <div style="font-size:10px;color:${m.textColor};opacity:0.7;margin-top:2px">${m.desc}</div>
+            </div>`;
+          }).join('')}
+        </div>
+        <div style="margin-top:1rem;font-size:12px;color:var(--muted);text-align:center">
+        </div>
+      </div>
+    </div>
+
+    <!-- PILLAR SCORES -->
+    <div class="card">
+      <div class="card-title">Pillar Scores</div>
+      <div class="two-col">
+        <div class="pillar-bar-list">
+          ${PILLARS.map(p => {
+            const avg = pillarAvg(p.id);
+            const pct = avg ? (avg / 5) * 100 : 0;
+            const mat = getMaturity(avg);
+            return `
+              <div class="pillar-bar-row">
+                <div class="pillar-bar-label">${p.id}. ${p.name.replace(/&amp;/g,'&')}</div>
+                <div class="pillar-bar-track"><div class="pillar-bar-fill" style="width:${pct}%;background:${p.color}"></div></div>
+                <div class="pillar-bar-val">${avg ? avg.toFixed(1) : '—'}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+        <div>
+          <div class="chart-wrap"><canvas id="radarChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRESCRIPTION -->
+    ${presc ? `
+    <div class="prescription-card">
+      <div class="prescription-title">🎯 Your Technology Prescription</div>
+      <div style="font-size:12px;opacity:0.6;margin-bottom:1.25rem;font-family:monospace">Key: ${presc.key} &nbsp;·&nbsp; ${qMeta ? qMeta.label : ''} &nbsp;·&nbsp; Build Tier: ${buildTier(techAnswers['T2'])} &nbsp;·&nbsp; Domain: ${techAnswers['T3']}</div>
+      <div class="presc-grid">
+        <div>
+          <div class="presc-row"><span class="presc-icon">🔧</span><div><div class="presc-key">Core Microsoft Stack</div><div class="presc-val">${presc.stack}</div></div></div>
+          <div class="presc-row"><span class="presc-icon">🚀</span><div><div class="presc-key">Entry Point</div><div class="presc-val">${presc.entry}</div></div></div>
+          <div class="presc-row"><span class="presc-icon">📅</span><div><div class="presc-key">30-Day Action</div><div class="presc-val">${presc.action}</div></div></div>
+        </div>
+        <div>
+          <div class="presc-row"><span class="presc-icon">👥</span><div><div class="presc-key">STU / Specialist Team</div><div class="presc-val">${presc.stu}</div></div></div>
+          <div class="presc-row"><span class="presc-icon">📌</span><div><div class="presc-key">Primary ISD Solution Play</div><div class="presc-val">${presc.play}</div></div></div>
+          <div class="presc-row"><span class="presc-icon">📦</span><div><div class="presc-key">Primary ISD Offer</div><div class="presc-val">${presc.offer}</div></div></div>
+          ${presc.secondary ? `<div class="presc-row"><span class="presc-icon">➕</span><div><div class="presc-key">Secondary Play</div><div class="presc-val">${presc.secondary}</div></div></div>` : ''}
+          ${presc.notes ? `<div class="presc-row"><span class="presc-icon">💡</span><div><div class="presc-key">Notes</div><div class="presc-val">${presc.notes}</div></div></div>` : ''}
+        </div>
+      </div>
+    </div>
+    ` : `
+    <div class="card" style="border-left: 4px solid var(--ms-orange)">
+      <div class="card-title">Complete Tech Profile for Prescription</div>
+      <p style="color:var(--muted);font-size:14px;margin-top:0.5rem">Answer the T1–T6 questions in the Tech Profile tab to receive your personalized technology stack recommendation.</p>
+      <div style="margin-top:1rem"><button class="btn btn-primary btn-sm" onclick="showSection('techprofile')">Go to Tech Profile →</button></div>
+    </div>
+    `}
+
+    ${buildExtraPrescrHTML(presc, govOverlay, speedRoadmap, isdPlays, t6Label, qMeta)}
+
+    <!-- REFERENCE LINK -->
+    <div style="text-align:right;margin-top:1rem">
+      <button class="btn btn-outline btn-sm" onclick="showSection('reference')">View ISD Portfolio Reference →</button>
+    </div>
+  `;
+
+  // Draw radar chart
+  setTimeout(() => {
+    const ctx = document.getElementById('radarChart');
+    if (!ctx) return;
+    if (radarChart) { radarChart.destroy(); radarChart = null; }
+    radarChart = new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: PILLARS.map(p => wrapLabel(p.name, 18)),
+        datasets: [{
+          label: 'Score',
+          data: PILLARS.map(p => pillarAvg(p.id) || 0),
+          backgroundColor: 'rgba(0,120,212,0.15)',
+          borderColor: '#0078D4',
+          borderWidth: 2,
+          pointBackgroundColor: '#0078D4',
+          pointRadius: 4,
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: { r: { min: 0, max: 5, ticks: { stepSize: 1, font: { size: 10 } }, grid: { color: '#edebe9' }, pointLabels: { font: { size: 10 }, padding: 8 } } },
+        plugins: { legend: { display: false } }
+      }
+    });
+  }, 100);
+}
+
+// ══════════════════════════════════════════════════════════
+// RESET
+// ══════════════════════════════════════════════════════════
+function resetAll() {
+  if (!confirm('Reset all scores and start over?')) return;
+  scores = {};
+  techAnswers = {};
+  renderAssessment();
+  renderTechProfile();
+  showSection('overview');
+}
+
+// ══════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  renderAssessment();
+  renderTechProfile();
+  updateProgressBar('overview');
+});
+</script>
+
+</body>
+</html>
