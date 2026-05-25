@@ -78,7 +78,7 @@ section.active { display: block; }
 
 /* ── HERO BANNER ── */
 .hero { background: linear-gradient(135deg, var(--ms-navy) 0%, #0d3a6e 100%); color: #fff; border-radius: var(--radius); padding: 3rem 2.5rem; margin-bottom: 2rem; position: relative; overflow: hidden; }
-.hero::after { content: ''; position: absolute; right: -20px; top: -20px; width: 280px; height: 280px; border-radius: 50%; background: rgba(80,230,255,0.06); }
+.hero::after { content: none; }
 .hero::before { content: ''; position: absolute; right: 20px; top: 20px; width: 200px; height: 200px; border-radius: 50%; background-image: url('../img/logo-latest-circle.png'); background-position: center center; background-repeat: no-repeat; background-size: cover; z-index: 1; }
 .hero-tag { display: inline-block; background: rgba(80,230,255,0.18); color: var(--ms-cyan); font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; margin-bottom: 1rem; border: 1px solid rgba(80,230,255,0.3); }
 .hero h1 { font-size: 36px; font-weight: 800; letter-spacing: -1px; line-height: 1.15; margin-bottom: 0.75rem; }
