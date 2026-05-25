@@ -21,6 +21,7 @@
   </a>
   <nav>
     <button onclick="showSection('overview')" id="nav-overview" class="active">Overview</button>
+    <button onclick="showSection('profile')" id="nav-profile">Company Profile</button>
     <button onclick="showSection('assessment')" id="nav-assessment">Assessment</button>
     <button onclick="showSection('techprofile')" id="nav-techprofile">Tech Profile</button>
     <button onclick="showSection('results')" id="nav-results">Results</button>
@@ -31,9 +32,10 @@
 <div id="progress-bar-wrap">
   <div class="progress-steps" id="progressSteps" style="--prog:0%">
     <div class="progress-step active" onclick="showSection('overview')"><div class="step-dot">1</div><div class="step-label">Overview</div></div>
-    <div class="progress-step" onclick="showSection('assessment')"><div class="step-dot">2</div><div class="step-label">Assessment</div></div>
-    <div class="progress-step" onclick="showSection('techprofile')"><div class="step-dot">3</div><div class="step-label">Tech Profile</div></div>
-    <div class="progress-step" onclick="showSection('results')"><div class="step-dot">4</div><div class="step-label">Results</div></div>
+    <div class="progress-step" onclick="showSection('profile')"><div class="step-dot">2</div><div class="step-label">Company Profile</div></div>
+    <div class="progress-step" onclick="showSection('assessment')"><div class="step-dot">3</div><div class="step-label">Assessment</div></div>
+    <div class="progress-step" onclick="showSection('techprofile')"><div class="step-dot">4</div><div class="step-label">Tech Profile</div></div>
+    <div class="progress-step" onclick="showSection('results')"><div class="step-dot">5</div><div class="step-label">Results</div></div>
   </div>
 </div>
 
@@ -44,7 +46,7 @@
   <div class="hero">
     <div class="hero-tag">Microsoft ISD · 2026</div>
     <h1>Responsible AI<br><span>Social Evaluation</span></h1>
-    <p>A structured assessment framework that measures your organization's AI readiness across seven social and operational pillars and suggests the Microsoft technology stack for your unique context.</p>
+    <p style="color:#e81123;opacity:1">This product is currently under development and is not yet in production.The features, functionality, performance, and roadmap described are subject to change without notice.The product is provided "as is" for evaluation and testing purposes only and should not be relied upon for production workloads or business‑critical decisions.</p>
     <div class="hero-meta"><b>Owner: Valeria Vitiello</b> &nbsp;·&nbsp; vvitiello@microsoft.com</div>
     <div class="hero-meta"><b>Project Sponsor: Luciano Raso</b> &nbsp;·&nbsp; luraso@microsoft.com</div>
     <div class="hero-meta"><b>Technical Oversight: Luca Di Biagio</b> &nbsp;·&nbsp; lucadb@microsoft.com</div>
@@ -56,23 +58,23 @@
     <div class="steps-grid">
       <div class="step-card">
         <div class="step-num">1</div>
-        <div class="step-title">Assessment tab</div>
-        <div class="step-desc">Score each of the 35 questions on a scale of 1–5. Pillar averages, maturity level, and quadrant position are calculated automatically.</div>
+        <div class="step-title">Company Profile tab</div>
+        <div class="step-desc">Select your company size and the role of the person completing this assessment. This helps tailor the results to your context.</div>
       </div>
       <div class="step-card">
         <div class="step-num">2</div>
-        <div class="step-title">Tech Profile tab</div>
-        <div class="step-desc">Answer 6 Technology Context Profile questions (T1–T6) to capture your licensing baseline, build capacity, primary use case, and regulatory context.</div>
+        <div class="step-title">Assessment tab</div>
+        <div class="step-desc">Score each of the 35 questions on a scale of 1–5. You may skip questions you cannot answer. Pillar averages, maturity level, and quadrant position are calculated automatically.</div>
       </div>
       <div class="step-card">
         <div class="step-num">3</div>
-        <div class="step-title">Results tab</div>
-        <div class="step-desc">Your complete technology recommendation is generated automatically — core Microsoft AI stack, governance overlay, recommended entry point, and speed-to-value roadmap.</div>
+        <div class="step-title">Tech Profile tab</div>
+        <div class="step-desc">Answer 7 Technology Context Profile questions (T1–T7) to capture your licensing baseline, build capacity, primary use case, and regulatory context. Select all that apply where indicated.</div>
       </div>
       <div class="step-card">
         <div class="step-num">4</div>
-        <div class="step-title">Share with Microsoft</div>
-        <div class="step-desc">Complete this assessment in advance of the workshop with Microsoft and use the consolidated results to identify areas of organizational alignment and divergence that require discussion, decision, and follow‑up actions.</div>
+        <div class="step-title">Results &amp; Share with Microsoft</div>
+        <div class="step-desc">Your complete technology recommendation is generated automatically. Use the consolidated results to identify areas of organizational alignment and divergence that require discussion with Microsoft.</div>
       </div>
     </div>
   </div>
@@ -92,14 +94,79 @@
   </div>
 
   <div class="btn-nav">
-    <button class="btn btn-primary" onclick="showSection('assessment')">Start Assessment →</button>
+    <button class="btn btn-primary" onclick="showSection('profile')">Start Assessment →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════ COMPANY PROFILE ══════════════════════════ -->
+<section id="profile">
+  <div class="section-title">Company Profile</div>
+  <div class="section-sub">Tell us about your organization so we can tailor the assessment to your context</div>
+
+  <div class="card">
+    <div class="card-title">Organization Size</div>
+    <div class="card-sub">How many employees does your organization have?</div>
+    <div class="profile-options" id="profile-size">
+      <label class="tq-opt" id="prof-size-small">
+        <input type="radio" name="company-size" value="small" onchange="setProfile('size','small')">
+        <span class="tq-opt-label"><span class="tq-opt-val">S</span>Small (1–249 employees)</span>
+      </label>
+      <label class="tq-opt" id="prof-size-medium">
+        <input type="radio" name="company-size" value="medium" onchange="setProfile('size','medium')">
+        <span class="tq-opt-label"><span class="tq-opt-val">M</span>Medium (250–999 employees)</span>
+      </label>
+      <label class="tq-opt" id="prof-size-large">
+        <input type="radio" name="company-size" value="large" onchange="setProfile('size','large')">
+        <span class="tq-opt-label"><span class="tq-opt-val">L</span>Large (1,000–9,999 employees)</span>
+      </label>
+      <label class="tq-opt" id="prof-size-enterprise">
+        <input type="radio" name="company-size" value="enterprise" onchange="setProfile('size','enterprise')">
+        <span class="tq-opt-label"><span class="tq-opt-val">XL</span>Enterprise (10,000+ employees)</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Your Role</div>
+    <div class="card-sub">What best describes your role in the organization?</div>
+    <div class="profile-options" id="profile-role">
+      <label class="tq-opt" id="prof-role-csuite">
+        <input type="radio" name="company-role" value="c-suite" onchange="setProfile('role','c-suite')">
+        <span class="tq-opt-label"><span class="tq-opt-val">C</span>C-Suite / Board Member (CEO, CTO, CDO, CIO)</span>
+      </label>
+      <label class="tq-opt" id="prof-role-head">
+        <input type="radio" name="company-role" value="head-innovation" onchange="setProfile('role','head-innovation')">
+        <span class="tq-opt-label"><span class="tq-opt-val">HI</span>Head of Innovation / Digital Transformation</span>
+      </label>
+      <label class="tq-opt" id="prof-role-itdir">
+        <input type="radio" name="company-role" value="it-director" onchange="setProfile('role','it-director')">
+        <span class="tq-opt-label"><span class="tq-opt-val">IT</span>IT Director / IT Manager</span>
+      </label>
+      <label class="tq-opt" id="prof-role-bu">
+        <input type="radio" name="company-role" value="bu-leader" onchange="setProfile('role','bu-leader')">
+        <span class="tq-opt-label"><span class="tq-opt-val">BU</span>Business Unit Leader / VP</span>
+      </label>
+      <label class="tq-opt" id="prof-role-data">
+        <input type="radio" name="company-role" value="data-ai-lead" onchange="setProfile('role','data-ai-lead')">
+        <span class="tq-opt-label"><span class="tq-opt-val">AI</span>Data & AI Lead / ML Engineer</span>
+      </label>
+      <label class="tq-opt" id="prof-role-other">
+        <input type="radio" name="company-role" value="other" onchange="setProfile('role','other')">
+        <span class="tq-opt-label"><span class="tq-opt-val">OT</span>Other</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="btn-nav">
+    <button class="btn btn-ghost" onclick="showSection('overview')">← Back</button>
+    <button class="btn btn-primary" onclick="showSection('assessment')">Continue to Assessment →</button>
   </div>
 </section>
 
 <!-- ══════════════════════════ ASSESSMENT ══════════════════════════ -->
 <section id="assessment">
   <div class="section-title">Social Architecture Assessment</div>
-  <div class="section-sub">Score each question 1 (Starting) to 5 (Adaptive) &nbsp;·&nbsp; <span id="answered-count">0 of 35</span> answered</div>
+  <div class="section-sub">Score each question 1 (Starting) to 5 (Adaptive). You may skip questions you cannot answer. &nbsp;·&nbsp; <span id="answered-count">0 of 35</span> answered</div>
   <div id="incomplete-warn" class="incomplete-warn">⚠ Please answer all 35 questions before continuing to see your full prescription.</div>
   <div id="assessment-questions"></div>
   <div class="btn-nav">
@@ -112,7 +179,7 @@
 <!-- ══════════════════════════ TECH PROFILE ══════════════════════════ -->
 <section id="techprofile">
   <div class="section-title">Technology Context Profile</div>
-  <div class="section-sub">Select one answer per question (A–E) to calibrate your prescription</div>
+  <div class="section-sub">Answer each question below. Select one answer unless marked "Select all that apply".</div>
   <div id="tech-profile-questions"></div>
   <div class="btn-nav">
     <button class="btn btn-ghost" onclick="showSection('assessment')">← Back</button>
@@ -220,85 +287,93 @@ const PILLARS = [
 ];
 
 const QUESTIONS = [
-  { id:'1.1', p:1, q:'How does/would your organization treat AI-generated recommendations?', s1:'AI is not in use; recommendations would likely be ignored or viewed with skepticism', s5:'Drives autonomous actions with minimal human intervention' },
-  { id:'1.2', p:1, q:'How does your organization approach the risk of AI errors or inaccuracies?', s1:'AI is not in use; no awareness of AI error risk or response process exists', s5:'AI errors treated as operational risk — quantified and mitigated' },
-  { id:'1.3', p:1, q:'Who currently uses AI tools in your organization?', s1:'Nobody — AI tools are not yet in use', s5:'Organization-wide, embedded in core workflows' },
-  { id:'1.4', p:1, q:'How open is leadership to the idea of delegating tasks or decisions to AI agents?', s1:'Not on the radar — leadership has not considered AI delegation and requires full human control', s5:'Actively designing workflows around agents as primary executors' },
-  { id:'1.5', p:1, q:'How does your organization communicate the limitations of AI tools to employees?', s1:'Not communicated — AI is not yet in use or there is no awareness of the need', s5:'Transparent AI governance dashboards accessible to everyone' },
-  { id:'2.1', p:2, q:'Does a defined AI governance policy exist?', s1:'No policy exists', s5:'Integrated into operational controls and audited regularly' },
-  { id:'2.2', p:2, q:'How does your organization plan to assign accountability for AI agent errors or wrong decisions?', s1:'Nobody — accountability is undefined', s5:'Clear RACI with defined escalation paths for AI decisions' },
-  { id:'2.3', p:2, q:'How does your organization monitor or plan to monitor AI models and agents in production?', s1:'Not monitored — no AI in production or no monitoring plan in place', s5:'Continuous observability with drift detection and SLA-backed alerts' },
-  { id:'2.4', p:2, q:'How is AI-related risk managed in your organization?', s1:'Not managed or recognized', s5:'AI risk embedded in enterprise risk management and strategic planning' },
-  { id:'2.5', p:2, q:'Are you compliant with AI regulations (EU AI Act, GDPR, etc.)?', s1:'Unaware of applicable regulations', s5:'Proactively ahead of regulatory requirements' },
-  { id:'3.1', p:3, q:"How would you describe your workforce's AI literacy?", s1:'Most employees have never used a generative AI tool', s5:'AI fluency tracked as a core competency in performance management' },
-  { id:'3.2', p:3, q:'How does your org address fear of AI replacing jobs?', s1:'Not addressed — either not yet a concern or a source of unresolved resistance', s5:'AI adoption co-designed with employees as equal partners' },
-  { id:'3.3', p:3, q:'What is the availability of AI champions or power users?', s1:'None identified', s5:'AI champions embedded and resourced in every business unit' },
-  { id:'3.4', p:3, q:'How does your org upskill employees for AI-augmented roles?', s1:'No structured upskilling program exists', s5:'AI competency framework with role-specific certification paths' },
-  { id:'3.5', p:3, q:'How involved are employees in shaping how AI tools and workflows are introduced?', s1:'Not involved at any stage', s5:'Employee-led AI innovation is encouraged, funded, and rewarded' },
-  { id:'4.1', p:4, q:'How well-documented are your core business processes?', s1:'Mostly undocumented — tribal knowledge dominates', s5:'Structured in formal models, continuously updated' },
-  { id:'4.2', p:4, q:'How variable are decisions in your key workflows?', s1:'Highly variable, require expert judgment, many exceptions', s5:'Decision logic fully specified in a decision management system' },
-  { id:'4.3', p:4, q:'How much organizational knowledge is accessible digitally?', s1:"Most knowledge lives in people's heads", s5:'Knowledge graph or semantic search enables AI retrieval at scale' },
-  { id:'4.4', p:4, q:'What is the level of process standardization across departments?', s1:'Each department does things completely differently', s5:'Continuous process improvement with AI-driven optimization' },
-  { id:'4.5', p:4, q:'How automation-ready are your key workflows if AI tools were introduced?', s1:'Fully human-driven — no automation points identified', s5:'Adaptive workflows where AI and humans dynamically divide work' },
-  { id:'5.1', p:5, q:'How would you rate the quality and accessibility of your data?', s1:'Siloed, inconsistent, and difficult to access', s5:'Real-time, governed, AI-ready data platform in production' },
-  { id:'5.2', p:5, q:'How integrated are your key business systems?', s1:'Siloed systems with manual data transfer between them', s5:'Composable data fabric enables autonomous AI access across systems' },
-  { id:'5.3', p:5, q:'How is your unstructured content managed?', s1:'Unmanaged — scattered across drives and mailboxes', s5:'AI-indexed with semantic search and enterprise knowledge grounding' },
-  { id:'5.4', p:5, q:"Do you have a strategy to connect AI tools to your organization's internal knowledge and data?", s1:'No strategy in place', s5:'Comprehensive knowledge layer actively grounding all AI agents' },
-  { id:'5.5', p:5, q:'How does your organization manage or plan to manage data privacy and security for AI use?', s1:'No consideration for AI data privacy — AI is not yet in use or data risks are unrecognized', s5:'Zero-trust data access model applied to all AI agent interactions' },
-  { id:'6.1', p:6, q:'How clearly are AI use cases tied to business outcomes?', s1:'No clear business case exists for AI', s5:'AI impact measured in P&L and operational dashboards in real time' },
-  { id:'6.2', p:6, q:'How does your organization prioritize or plan to prioritize AI initiatives?', s1:'No AI initiatives exist, or prioritization is entirely ad hoc', s5:'Portfolio management with dynamic reprioritization tied to strategy' },
-  { id:'6.3', p:6, q:'How engaged is senior leadership in AI adoption?', s1:'Unaware or disengaged', s5:'AI is a board-level strategic priority with named executive ownership' },
-  { id:'6.4', p:6, q:'How does your organization measure or plan to measure the ROI of AI investments?', s1:'No measurement or tracking whatsoever', s5:'Real-time value realization dashboard visible to leadership' },
-  { id:'6.5', p:6, q:'How aligned is your AI strategy to industry competitive dynamics?', s1:'No benchmarking against industry peers', s5:'AI is central to business model transformation and competitive moat' },
-  { id:'7.1', p:7, q:'Does a Responsible AI (RAI) framework exist?', s1:'No framework exists', s5:'RAI principles operationalized, audited, and reported externally' },
-  { id:'7.2', p:7, q:'How does your organization handle AI bias and fairness?', s1:'Not addressed at any level', s5:'Fairness metrics tracked per model, published and regularly reviewed' },
-  { id:'7.3', p:7, q:"How transparent is (or would be) your organization's use of AI in customer-facing processes?", s1:'Not considered — AI is not yet used with customers or transparency has not been thought through', s5:'Customers can opt out, audit, and formally appeal AI decisions' },
-  { id:'7.4', p:7, q:'Preparedness for EU AI Act or equivalent regulation?', s1:'Unaware of the regulation', s5:'Fully compliant, audit-ready, legal team engaged' },
-  { id:'7.5', p:7, q:'How does your organization handle or plan to handle inaccurate or fabricated AI-generated content?', s1:'No handling in place — AI is not generating content or risks are unrecognized', s5:'Multi-layer content safety and automated verification pipeline' },
+  { id:'1.1', p:1, q:'To what extent does (or would) your organization rely on AI-generated recommendations to make decisions?', s1:'AI is not in use; recommendations would likely be ignored or viewed with skepticism', s5:'AI drives autonomous actions with minimal human intervention' },
+  { id:'1.2', p:1, q:'To what extent has your organization identified and prepared for the risk of AI producing errors or inaccurate outputs?', s1:'No awareness of AI error risk — no response process exists', s5:'AI errors are treated as operational risk — quantified, monitored, and mitigated systematically' },
+  { id:'1.3', p:1, q:'How widespread is AI tool usage across your organization today?', s1:'Nobody — AI tools are not yet in use', s5:'Organization-wide, embedded in core workflows across all departments' },
+  { id:'1.4', p:1, q:'To what extent is leadership open to delegating tasks or decisions to AI agents?', s1:'Not on the radar — leadership requires full human control over all decisions', s5:'Leadership actively designs workflows around AI agents as primary executors' },
+  { id:'1.5', p:1, q:'To what extent does your organization communicate the limitations and boundaries of AI tools to employees?', s1:'Not communicated — no awareness of the need exists', s5:'Transparent AI governance dashboards are accessible to all employees' },
+  { id:'2.1', p:2, q:'Does your organization have a defined AI governance policy?', s1:'No policy exists', s5:'Policy is integrated into operational controls and audited regularly' },
+  { id:'2.2', p:2, q:'To what extent has your organization defined who is accountable when an AI agent makes an error or wrong decision?', s1:'Accountability is undefined — nobody owns AI outcomes', s5:'Clear RACI exists with defined escalation paths for all AI-driven decisions' },
+  { id:'2.3', p:2, q:'To what extent does your organization monitor (or plan to monitor) AI models and agents running in production?', s1:'Not monitored — no AI in production or no monitoring plan in place', s5:'Continuous observability with drift detection and SLA-backed alerts in place' },
+  { id:'2.4', p:2, q:'To what extent is AI-related risk formally managed in your organization?', s1:'Not managed or recognized as a distinct risk category', s5:'AI risk is embedded in enterprise risk management and strategic planning' },
+  { id:'2.5', p:2, q:'To what extent is your organization compliant with AI-related regulations (e.g., EU AI Act, GDPR)?', s1:'Unaware of applicable regulations', s5:'Proactively ahead of regulatory requirements with continuous compliance monitoring' },
+  { id:'3.1', p:3, q:'What is the general level of AI familiarity among your employees? <span class="q-tooltip" title="Consider: have most employees used tools like Copilot, ChatGPT, or similar? You may estimate if exact data is unavailable.">ℹ️</span>', s1:'Most employees have never used a generative AI tool', s5:'AI fluency is tracked as a core competency in performance management' },
+  { id:'3.2', p:3, q:'To what extent does your organization address employee concerns about AI replacing their jobs?', s1:'Not addressed — either not yet a concern or a source of unresolved resistance', s5:'AI adoption is co-designed with employees as equal partners in the process' },
+  { id:'3.3', p:3, q:'Does your organization have identified AI champions or power users? <span class="q-tooltip" title="AI champions = employees who actively explore, promote, and help others adopt AI tools within their teams. Also called \'power users\' or \'AI advocates\'.">ℹ️</span>', s1:'None identified — no formal or informal AI advocates exist', s5:'AI champions are embedded, recognized, and resourced in every business unit' },
+  { id:'3.4', p:3, q:'To what extent does your organization provide structured training to prepare employees for AI-augmented roles?', s1:'No structured upskilling program exists', s5:'AI competency framework exists with role-specific certification paths' },
+  { id:'3.5', p:3, q:'To what extent are employees involved in shaping how AI tools and workflows are introduced?', s1:'Not involved at any stage', s5:'Employee-led AI innovation is encouraged, funded, and rewarded' },
+  { id:'4.1', p:4, q:'To what extent are your core business processes documented?', s1:'Mostly undocumented — tribal knowledge dominates', s5:'Processes are structured in formal models and continuously updated' },
+  { id:'4.2', p:4, q:'To what extent do decisions in your key workflows follow consistent, repeatable patterns (vs. requiring expert judgment)?', s1:'Highly variable — many exceptions require expert judgment every time', s5:'Decision logic is fully specified in a decision management system' },
+  { id:'4.3', p:4, q:'To what extent is organizational knowledge accessible in digital form?', s1:"Most knowledge lives in people's heads or informal channels", s5:'Knowledge graph or semantic search enables AI retrieval at scale' },
+  { id:'4.4', p:4, q:'To what extent are processes standardized across departments?', s1:'Each department does things completely differently', s5:'Continuous process improvement with AI-driven optimization in place' },
+  { id:'4.5', p:4, q:'If AI tools were introduced today, how automation-ready would your key workflows be?', s1:'Fully human-driven — no automation points identified', s5:'Adaptive workflows where AI and humans dynamically divide work already exist' },
+  { id:'5.1', p:5, q:'To what extent is your data high-quality, consistent, and easily accessible for analysis?', s1:'Data is siloed, inconsistent, and difficult to access', s5:'Real-time, governed, AI-ready data platform is in production' },
+  { id:'5.2', p:5, q:'To what extent are your key business systems integrated with each other?', s1:'Siloed systems with manual data transfer between them', s5:'Composable data fabric enables autonomous AI access across all systems' },
+  { id:'5.3', p:5, q:'To what extent is your unstructured content (documents, emails, files) organized and searchable?', s1:'Unmanaged — scattered across drives and mailboxes with no indexing', s5:'AI-indexed with semantic search and enterprise knowledge grounding' },
+  { id:'5.4', p:5, q:"Does your organization have a strategy to connect AI tools to your internal knowledge and data sources?", s1:'No strategy in place', s5:'Comprehensive knowledge layer actively grounds all AI agents on internal data' },
+  { id:'5.5', p:5, q:'To what extent has your organization addressed data privacy and security specifically for AI use cases?', s1:'No consideration — AI data privacy risks are unrecognized', s5:'Zero-trust data access model is applied to all AI agent interactions' },
+  { id:'6.1', p:6, q:'To what extent are your AI use cases tied to specific, measurable business outcomes?', s1:'No clear business case exists for AI', s5:'AI impact is measured in P&L and operational dashboards in real time' },
+  { id:'6.2', p:6, q:'To what extent does your organization have a structured approach to prioritizing AI initiatives?', s1:'No AI initiatives exist, or prioritization is entirely ad hoc', s5:'Portfolio management with dynamic reprioritization tied to strategy' },
+  { id:'6.3', p:6, q:'To what extent is senior leadership engaged in and sponsoring AI adoption?', s1:'Unaware or disengaged — no leadership involvement', s5:'AI is a board-level strategic priority with named executive ownership' },
+  { id:'6.4', p:6, q:'To what extent does your organization track and measure the return on investment (ROI) of AI projects?', s1:'No measurement or tracking whatsoever', s5:'Real-time value realization dashboard is visible to leadership' },
+  { id:'6.5', p:6, q:'To what extent is your AI strategy informed by what competitors and industry peers are doing?', s1:'No benchmarking against industry peers', s5:'AI is central to business model transformation and competitive positioning' },
+  { id:'7.1', p:7, q:'Does your organization have a Responsible AI (RAI) framework in place?', s1:'No framework exists', s5:'RAI principles are operationalized, audited, and reported externally' },
+  { id:'7.2', p:7, q:'To what extent does your organization actively address AI bias and fairness?', s1:'Not addressed at any level', s5:'Fairness metrics are tracked per model, published, and regularly reviewed' },
+  { id:'7.3', p:7, q:'To what extent is (or would be) your use of AI transparent to customers in customer-facing processes?', s1:'Not considered — no transparency measures exist', s5:'Customers can opt out, audit, and formally appeal AI-driven decisions' },
+  { id:'7.4', p:7, q:'To what extent is your organization prepared for the EU AI Act or equivalent AI regulation?', s1:'Unaware of the regulation', s5:'Fully compliant, audit-ready, legal team actively engaged' },
+  { id:'7.5', p:7, q:'To what extent does your organization handle (or plan to handle) AI-generated content that may be inaccurate or fabricated?', s1:'No handling in place — risks are unrecognized', s5:'Multi-layer content safety and automated verification pipeline in place' },
 ];
 
 const TECH_QUESTIONS = [
-  { id:'T1', q:'Microsoft licensing baseline', g:'Your licensing baseline determines which Microsoft AI layer is immediately accessible', opts:[
-    {v:'A', l:'I do not know/ No Microsoft AI / basic M365 only'},
-    {v:'B', l:'M365 E3 (no Copilot yet)'},
-    {v:'C', l:'M365 E5/E7 or Copilot license active'},
-    {v:'D', l:'Azure subscription with AI services'},
-    {v:'E', l:'Full estate: M365 E5/E7 + Azure AI + Fabric'},
+  { id:'T1', q:'What Microsoft licenses does your organization currently hold?', g:'Select all that apply. Your licensing baseline determines which Microsoft AI capabilities are immediately accessible to you.', multi:true, opts:[
+    {v:'A', l:'No Microsoft licensing / basic Microsoft 365 only'},
+    {v:'B', l:'Microsoft 365 E3 (no Copilot license)'},
+    {v:'C', l:'Microsoft 365 E5 / E7 or Copilot license active'},
+    {v:'D', l:'Azure subscription with AI services (Azure OpenAI, AI Search, etc.)'},
+    {v:'E', l:'Full estate: Microsoft 365 E5/E7 + Azure AI + Microsoft Fabric'},
+    {v:'F', l:'GitHub (Copilot, Enterprise, or Advanced Security)'},
   ]},
-  { id:'T2', q:'AI build & customization capacity', g:'Build capacity is the most critical filter — it determines which product tier you can deploy', opts:[
-    {v:'A', l:'None — need turnkey out-of-the-box solutions'},
-    {v:'B', l:'Citizen developers (Power Platform / low-code)'},
-    {v:'C', l:'IT/fusion team — some dev + business partnership'},
-    {v:'D', l:'Professional developers (Azure-capable)'},
-    {v:'E', l:'Full AI/ML engineering team'},
+  { id:'T2', q:'What is your organization\'s capacity to build and customize AI solutions?', g:'This is the most critical filter — it determines which product tier you can realistically deploy and maintain.', opts:[
+    {v:'A', l:'None — we need turnkey, out-of-the-box solutions'},
+    {v:'B', l:'Citizen developers only (Power Platform / low-code tools)'},
+    {v:'C', l:'IT / fusion team — some development capability with business partnership'},
+    {v:'D', l:'Professional developers (capable of building on Azure)'},
+    {v:'E', l:'Full AI/ML engineering team with data science expertise'},
   ]},
-  { id:'T3', q:'Primary AI value domain', g:'The primary domain drives the product family recommendation (M365 vs Copilot Studio vs Azure AI)', opts:[
-    {v:'A', l:'Employee productivity & knowledge work'},
-    {v:'B', l:'Customer or citizen-facing experience'},
-    {v:'C', l:'Back-office operations & process automation'},
-    {v:'D', l:'Complex document intelligence & knowledge retrieval'},
-    {v:'E', l:'Real-time decisioning or autonomous multi-agent systems'},
+  { id:'T3', q:'What is the primary business area where you want AI to deliver value?', g:'The primary domain drives which Microsoft product family is recommended (Microsoft 365 vs Copilot Studio vs Azure AI).', opts:[
+    {v:'A', l:'Employee productivity & knowledge work (e.g., email, documents, meetings)'},
+    {v:'B', l:'Customer or citizen-facing experience (e.g., chatbots, portals)'},
+    {v:'C', l:'Back-office operations & process automation (e.g., invoicing, HR, supply chain)'},
+    {v:'D', l:'Complex document intelligence & knowledge retrieval (e.g., legal, compliance, research)'},
+    {v:'E', l:'Real-time decisioning or autonomous multi-agent systems (e.g., trading, logistics)'},
   ]},
-  { id:'T4', q:'Data & knowledge location', g:'Data location determines the grounding strategy and whether Azure Fabric is needed', opts:[
-    {v:'A', l:'Primarily in M365 (SharePoint, Teams, Outlook)'},
-    {v:'B', l:'CRM / ERP / line-of-business systems'},
-    {v:'C', l:'Structured databases + data warehouse'},
-    {v:'D', l:'Mix of cloud + on-prem + documents'},
-    {v:'E', l:'Azure Fabric / Data Lake + real-time sources'},
+  { id:'T4', q:'Where does the majority of your organization\'s data and knowledge reside?', g:'Data location determines the grounding strategy and whether Azure Fabric or additional connectors are needed.', opts:[
+    {v:'A', l:'Primarily in Microsoft 365 (SharePoint, Teams, Outlook, OneDrive)'},
+    {v:'B', l:'CRM / ERP / line-of-business systems (e.g., SAP, Salesforce, Dynamics)'},
+    {v:'C', l:'Structured databases and data warehouses (SQL, Oracle, etc.)'},
+    {v:'D', l:'A mix of cloud, on-premises systems, and documents'},
+    {v:'E', l:'Azure Fabric / Data Lake + real-time data sources'},
   ]},
-  { id:'T5', q:'Industry regulatory sensitivity', g:'Regulatory sensitivity triggers governance overlay requirements (Purview, Content Safety, Agent 365)', opts:[
-    {v:'A', l:'Low — general commercial, no specific AI regulation'},
-    {v:'B', l:'Moderate — standard data protection applies'},
-    {v:'C', l:'High — financial services, insurance, legal'},
-    {v:'D', l:'Very high — healthcare, pharma, life sciences'},
-    {v:'E', l:'Critical — government, defense, critical infrastructure'},
+  { id:'T5', q:'What level of regulatory sensitivity applies to your industry?', g:'Regulatory sensitivity triggers additional governance requirements (Purview, Content Safety, Agent 365).', opts:[
+    {v:'A', l:'Low — general commercial, no specific AI regulation applies'},
+    {v:'B', l:'Moderate — standard data protection applies (e.g., GDPR)'},
+    {v:'C', l:'High — financial services, insurance, or legal sector'},
+    {v:'D', l:'Very high — healthcare, pharma, or life sciences'},
+    {v:'E', l:'Critical — government, defense, or critical infrastructure'},
   ]},
-  { id:'T6', q:'Speed to first value needed', g:'Speed need sets the deployment pattern — quick win vs. structured program vs. multi-year transformation', opts:[
-    {v:'A', l:'Days — need a quick win now'},
-    {v:'B', l:'4–8 weeks — short pilot'},
-    {v:'C', l:'3–6 months — structured deployment'},
-    {v:'D', l:'6–12 months — enterprise transformation'},
+  { id:'T6', q:'How quickly does your organization need to see first results from AI?', g:'Speed-to-value sets the deployment pattern — quick win vs. structured program vs. multi-year transformation.', opts:[
+    {v:'A', l:'Days — we need a quick win now'},
+    {v:'B', l:'4–8 weeks — a short, focused pilot'},
+    {v:'C', l:'3–6 months — a structured deployment'},
+    {v:'D', l:'6–12 months — enterprise-wide transformation'},
     {v:'E', l:'Multi-year strategic program'},
+  ]},
+  { id:'T7', q:'Does your organization already use GitHub for development or AI-assisted coding?', g:'GitHub Copilot and GitHub Advanced Security are integral to the Microsoft AI development ecosystem.', opts:[
+    {v:'A', l:'No — we do not use GitHub'},
+    {v:'B', l:'GitHub for source control only (no AI features)'},
+    {v:'C', l:'GitHub Copilot for individual developers'},
+    {v:'D', l:'GitHub Copilot Business / Enterprise for teams'},
+    {v:'E', l:'GitHub Advanced Security + Copilot across the organization'},
   ]},
 ];
 
@@ -414,8 +489,9 @@ const MATURITY_LEVELS = [
 // ══════════════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════════════
-let scores = {}; // questionId → 1..5
-let techAnswers = {}; // T1..T6 → A..E
+let scores = {}; // questionId → 1..5 or 'skip'
+let techAnswers = {}; // T1..T7 → A..E (T1 is array for multi-select)
+let companyProfile = {}; // size, role
 let radarChart = null;
 
 // ══════════════════════════════════════════════════════════
@@ -434,7 +510,7 @@ function showSection(id) {
 
 function updateProgressBar(id) {
   const steps = document.querySelectorAll('.progress-step');
-  const map = ['overview', 'assessment', 'techprofile', 'results'];
+  const map = ['overview', 'profile', 'assessment', 'techprofile', 'results'];
   const idx = map.indexOf(id);
   steps.forEach((s, i) => {
     s.classList.remove('done', 'active');
@@ -443,6 +519,18 @@ function updateProgressBar(id) {
   });
   const pct = idx < 0 ? 0 : (idx / (map.length - 1)) * 100;
   document.getElementById('progressSteps').style.setProperty('--prog', pct + '%');
+}
+
+function setProfile(key, val) {
+  companyProfile[key] = val;
+  // Update selection UI
+  const container = document.getElementById(`profile-${key}`);
+  if (container) {
+    container.querySelectorAll('.tq-opt').forEach(el => {
+      const inp = el.querySelector('input');
+      el.classList.toggle('selected', inp.value === val);
+    });
+  }
 }
 
 function goToTechProfile() {
@@ -458,7 +546,7 @@ function goToResults() {
 // ══════════════════════════════════════════════════════════
 function pillarAvg(p) {
   const qs = QUESTIONS.filter(q => q.p === p);
-  const answered = qs.filter(q => scores[q.id]);
+  const answered = qs.filter(q => scores[q.id] && scores[q.id] !== 'skip');
   if (!answered.length) return null;
   return answered.reduce((s, q) => s + scores[q.id], 0) / answered.length;
 }
@@ -549,6 +637,7 @@ function renderAssessment() {
           ${[1,2,3,4,5].map(n => `
             <button class="score-btn ${scores[q.id]===n?'selected':''}" onclick="setScore('${q.id}',${n})" title="${n}">${n}</button>
           `).join('')}
+          <button class="score-btn skip-btn ${scores[q.id]==='skip'?'selected':''}" onclick="setScore('${q.id}','skip')" title="Skip this question">Skip</button>
         </div>
         <div class="score-label" id="score-label-${q.id.replace('.','_')}" style="color:var(--muted);font-size:11px">&nbsp;</div>
       `;
@@ -570,9 +659,17 @@ function togglePillar(id) {
 
 function setScore(qid, val) {
   scores[qid] = val;
-  // Update buttons — use getElementById to avoid dot-in-ID CSS selector ambiguity
+  // Update buttons
   const container = document.getElementById(`score-btns-${qid.replace('.','_')}`);
-  if (container) container.querySelectorAll('.score-btn').forEach((b, i) => b.classList.toggle('selected', i + 1 === val));
+  if (container) {
+    container.querySelectorAll('.score-btn').forEach(b => {
+      if (b.classList.contains('skip-btn')) {
+        b.classList.toggle('selected', val === 'skip');
+      } else {
+        b.classList.toggle('selected', parseInt(b.textContent) === val);
+      }
+    });
+  }
   // Update pillar score
   const q = QUESTIONS.find(q => q.id === qid);
   updatePillarScore(q.p);
@@ -596,19 +693,31 @@ function renderTechProfile() {
   TECH_QUESTIONS.forEach(tq => {
     const block = document.createElement('div');
     block.className = 'card tq-block';
+    const isMulti = tq.multi === true;
     block.innerHTML = `
       <div class="tq-header">
         <span class="tq-id">${tq.id}</span>
         <span class="tq-text">${tq.q}</span>
+        ${isMulti ? '<span class="tq-multi-badge">Select all that apply</span>' : ''}
       </div>
       <div class="tq-guidance">${tq.g}</div>
       <div class="tq-options" id="tq-opts-${tq.id}">
-        ${tq.opts.map(o => `
-          <label class="tq-opt ${techAnswers[tq.id]===o.v?'selected':''}" id="tq-opt-${tq.id}-${o.v}">
-            <input type="radio" name="${tq.id}" value="${o.v}" ${techAnswers[tq.id]===o.v?'checked':''} onchange="setTech('${tq.id}','${o.v}')">
-            <span class="tq-opt-label"><span class="tq-opt-val">${o.v}</span>${o.l}</span>
-          </label>
-        `).join('')}
+        ${tq.opts.map(o => {
+          if (isMulti) {
+            const checked = techAnswers[tq.id] && techAnswers[tq.id].includes(o.v);
+            return `
+            <label class="tq-opt ${checked?'selected':''}" id="tq-opt-${tq.id}-${o.v}">
+              <input type="checkbox" name="${tq.id}" value="${o.v}" ${checked?'checked':''} onchange="setTechMulti('${tq.id}','${o.v}', this.checked)">
+              <span class="tq-opt-label"><span class="tq-opt-val">${o.v}</span>${o.l}</span>
+            </label>`;
+          } else {
+            return `
+            <label class="tq-opt ${techAnswers[tq.id]===o.v?'selected':''}" id="tq-opt-${tq.id}-${o.v}">
+              <input type="radio" name="${tq.id}" value="${o.v}" ${techAnswers[tq.id]===o.v?'checked':''} onchange="setTech('${tq.id}','${o.v}')">
+              <span class="tq-opt-label"><span class="tq-opt-val">${o.v}</span>${o.l}</span>
+            </label>`;
+          }
+        }).join('')}
       </div>
     `;
     container.appendChild(block);
@@ -620,6 +729,19 @@ function setTech(tid, val) {
   document.querySelectorAll(`#tq-opts-${tid} .tq-opt`).forEach(el => {
     const inp = el.querySelector('input');
     el.classList.toggle('selected', inp.value === val);
+  });
+}
+
+function setTechMulti(tid, val, checked) {
+  if (!techAnswers[tid]) techAnswers[tid] = [];
+  if (checked) {
+    if (!techAnswers[tid].includes(val)) techAnswers[tid].push(val);
+  } else {
+    techAnswers[tid] = techAnswers[tid].filter(v => v !== val);
+  }
+  document.querySelectorAll(`#tq-opts-${tid} .tq-opt`).forEach(el => {
+    const inp = el.querySelector('input');
+    el.classList.toggle('selected', inp.checked);
   });
 }
 
@@ -746,6 +868,18 @@ function renderResults() {
     return;
   }
 
+  // Company profile context banner
+  const sizeLabels = { small:'Small (1–249)', medium:'Medium (250–999)', large:'Large (1,000–9,999)', enterprise:'Enterprise (10,000+)' };
+  const roleLabels = { 'c-suite':'C-Suite / Board', 'head-innovation':'Head of Innovation / DT', 'it-director':'IT Director / Manager', 'bu-leader':'BU Leader / VP', 'data-ai-lead':'Data & AI Lead', 'other':'Other' };
+  const profileBanner = (companyProfile.size || companyProfile.role) ?
+    `<div class="card" style="border-left:4px solid var(--ms-purple);padding:1rem 1.5rem;margin-bottom:1.5rem">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:4px">Company Profile Context</div>
+      <div style="font-size:14px;color:var(--text)">
+        ${companyProfile.size ? '<strong>Organization Size:</strong> ' + sizeLabels[companyProfile.size] + ' &nbsp;·&nbsp; ' : ''}
+        ${companyProfile.role ? '<strong>Respondent Role:</strong> ' + roleLabels[companyProfile.role] : ''}
+      </div>
+    </div>` : '';
+
   // Pillar data for chart
   const pillarScores = PILLARS.map(p => ({ name: p.name.split(' ')[0] + ' ' + p.name.split(' ')[1], score: pillarAvg(p.id) || 0, color: p.color }));
 
@@ -766,6 +900,7 @@ function renderResults() {
   }
 
   container.innerHTML = `
+    ${profileBanner}
     <!-- SCORE SUMMARY -->
     <div class="results-grid">
       <div class="card score-hero">
@@ -782,16 +917,22 @@ function renderResults() {
       </div>
       <div class="card">
         <div style="font-size:13px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Quadrant Position</div>
-        <div class="quadrant-grid">
-          ${['Q3','Q4','Q1','Q2'].map(q => {
-            const m = QUADRANT_META[q];
-            const isActive = q === quadrant;
-            return `<div class="q-cell${isActive?' active':''}" style="background:${m.color}">
-              <div class="q-cell-label" style="color:${m.accent}">${q}</div>
-              <div class="q-cell-name" style="color:${m.textColor}">${m.label.split('—')[1].trim()}</div>
-              <div style="font-size:10px;color:${m.textColor};opacity:0.7;margin-top:2px">${m.desc}</div>
-            </div>`;
-          }).join('')}
+        <div class="quadrant-wrapper">
+          <div class="quadrant-axis-y-label">← Low Complexity &nbsp;&nbsp; <strong>Axis B — Org Complexity</strong> &nbsp;&nbsp; High Complexity →</div>
+          <div class="quadrant-with-axis">
+            <div class="quadrant-grid">
+              ${['Q3','Q4','Q1','Q2'].map(q => {
+                const m = QUADRANT_META[q];
+                const isActive = q === quadrant;
+                return `<div class="q-cell${isActive?' active':''}" style="background:${m.color}">
+                  <div class="q-cell-label" style="color:${m.accent}">${q}</div>
+                  <div class="q-cell-name" style="color:${m.textColor}">${m.label.split('—')[1].trim()}</div>
+                  <div style="font-size:10px;color:${m.textColor};opacity:0.7;margin-top:2px">${m.desc}</div>
+                </div>`;
+              }).join('')}
+            </div>
+          </div>
+          <div class="quadrant-axis-x-label">← Low Autonomy &nbsp;&nbsp; <strong>Axis A — Autonomy Readiness</strong> &nbsp;&nbsp; High Autonomy →</div>
         </div>
         <div style="margin-top:1rem;font-size:12px;color:var(--muted);text-align:center">
         </div>
@@ -901,6 +1042,7 @@ function resetAll() {
   if (!confirm('Reset all scores and start over?')) return;
   scores = {};
   techAnswers = {};
+  companyProfile = {};
   renderAssessment();
   renderTechProfile();
   showSection('overview');

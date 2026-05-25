@@ -217,6 +217,27 @@ section.active { display: block; }
 .next-step-title { font-size: 13px; font-weight: 700; color: var(--ms-navy); }
 .next-step-text { font-size: 13px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
 
+/* ── SKIP BUTTON ── */
+.skip-btn { width: auto !important; padding: 0 12px !important; font-size: 11px !important; font-weight: 600 !important; color: var(--muted) !important; border-color: var(--border) !important; background: var(--bg) !important; letter-spacing: 0.3px; }
+.skip-btn:hover { border-color: var(--ms-orange) !important; color: var(--ms-orange) !important; background: #fff4e5 !important; }
+.skip-btn.selected { background: var(--ms-orange) !important; border-color: var(--ms-orange) !important; color: #fff !important; }
+
+/* ── QUESTION TOOLTIPS ── */
+.q-tooltip { cursor: help; font-size: 14px; position: relative; display: inline-block; vertical-align: middle; margin-left: 4px; }
+.q-tooltip:hover::after { content: attr(title); position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%); background: var(--ms-navy); color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: 400; white-space: normal; width: 260px; line-height: 1.5; z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,0.2); pointer-events: none; }
+
+/* ── QUADRANT AXIS LABELS ── */
+.quadrant-wrapper { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.quadrant-with-axis { display: flex; align-items: center; gap: 8px; width: 100%; }
+.quadrant-axis-y-label { font-size: 11px; color: var(--muted); text-align: center; font-weight: 500; letter-spacing: 0.3px; }
+.quadrant-axis-x-label { font-size: 11px; color: var(--muted); text-align: center; font-weight: 500; letter-spacing: 0.3px; margin-top: 4px; }
+
+/* ── TECH PROFILE MULTI-SELECT BADGE ── */
+.tq-multi-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: #e6f7e6; color: var(--ms-green); padding: 3px 8px; border-radius: 10px; margin-left: 8px; white-space: nowrap; }
+
+/* ── COMPANY PROFILE ── */
+.profile-options { display: grid; gap: 6px; }
+
 /* ── PRINT ── */
 @media print {
   header,
