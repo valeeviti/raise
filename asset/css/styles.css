@@ -227,10 +227,14 @@ section.active { display: block; }
 .q-tooltip:hover::after { content: attr(title); position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%); background: var(--ms-navy); color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: 400; white-space: normal; width: 260px; line-height: 1.5; z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,0.2); pointer-events: none; }
 
 /* ── QUADRANT AXIS LABELS ── */
-.quadrant-wrapper { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.quadrant-with-axis { display: flex; align-items: center; gap: 8px; width: 100%; }
-.quadrant-axis-y-label { font-size: 11px; color: var(--muted); text-align: center; font-weight: 500; letter-spacing: 0.3px; }
-.quadrant-axis-x-label { font-size: 11px; color: var(--muted); text-align: center; font-weight: 500; letter-spacing: 0.3px; margin-top: 4px; }
+.quadrant-wrapper { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+.quadrant-with-axis { display: flex; align-items: stretch; gap: 0; }
+.quadrant-axis-y { display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 8px 0; margin-right: 10px; min-width: 20px; }
+.quadrant-axis-y .axis-name { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 11px; font-weight: 700; color: var(--ms-navy); letter-spacing: 0.5px; white-space: nowrap; }
+.quadrant-axis-y .axis-end { font-size: 9px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+.quadrant-axis-x { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; margin-left: 30px; }
+.quadrant-axis-x .axis-name { font-size: 11px; font-weight: 700; color: var(--ms-navy); letter-spacing: 0.5px; }
+.quadrant-axis-x .axis-end { font-size: 9px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
 
 /* ── TECH PROFILE MULTI-SELECT BADGE ── */
 .tq-multi-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: #e6f7e6; color: var(--ms-green); padding: 3px 8px; border-radius: 10px; margin-left: 8px; white-space: nowrap; }

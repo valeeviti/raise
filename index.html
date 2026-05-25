@@ -918,8 +918,12 @@ function renderResults() {
       <div class="card">
         <div style="font-size:13px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Quadrant Position</div>
         <div class="quadrant-wrapper">
-          <div class="quadrant-axis-y-label">← Low Complexity &nbsp;&nbsp; <strong>Axis B — Org Complexity</strong> &nbsp;&nbsp; High Complexity →</div>
           <div class="quadrant-with-axis">
+            <div class="quadrant-axis-y">
+              <span class="axis-end">High</span>
+              <span class="axis-name">Org Complexity</span>
+              <span class="axis-end">Low</span>
+            </div>
             <div class="quadrant-grid">
               ${['Q3','Q4','Q1','Q2'].map(q => {
                 const m = QUADRANT_META[q];
@@ -932,7 +936,11 @@ function renderResults() {
               }).join('')}
             </div>
           </div>
-          <div class="quadrant-axis-x-label">← Low Autonomy &nbsp;&nbsp; <strong>Axis A — Autonomy Readiness</strong> &nbsp;&nbsp; High Autonomy →</div>
+          <div class="quadrant-axis-x">
+            <span class="axis-end">Low</span>
+            <span class="axis-name">Autonomy Readiness</span>
+            <span class="axis-end">High</span>
+          </div>
         </div>
         <div style="margin-top:1rem;font-size:12px;color:var(--muted);text-align:center">
         </div>
